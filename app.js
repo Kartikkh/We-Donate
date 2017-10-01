@@ -1,61 +1,71 @@
 var express = require('express');
 var path = require('path');
-var passport = require('passport');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var compression = require('compression');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var secret = require('./config/Dbutil');
+var mongoose = require('mongoose')
+
 var index = require('./routes/index');
 var users = require('./routes/users');
+var user_api = require('./routes/user_api.js');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(compression());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+mongoose.connect('mongodb://kartik:kartik@ds157584.mlab.com:57584/wedonate',(err)=>{
+    if(err){
+        console.log('Connection to MongoDB Failed!')
+        console.log(err)
+    }
+    else{
+        console.log('Connection to MongoDB Successfull!')
+    }
+})
+
 app.use('/', index);
 app.use('/users', users);
+app.use('/user_api', user_api);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
 
-// Db connect
+var port = process.env.PORT || 8080;
+app.set('port', port)
+app.listen(app.get('port'),(err)=>{
+    if(err)
+        console.log(err)
+    else
+        console.log('Server listening on '+app.get('port'))
+})
 
-mongoose.connect(secret.url, function(err) {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log("Connected to the database");
+app.use(function (err, req, res, next) {
+    if (err.name === 'UnauthorizedError') {
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
     }
 });
-
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;

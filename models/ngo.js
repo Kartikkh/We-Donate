@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
+var mongoose = require('mongoose')
+var bcrypt = require('bcrypt')
 
 var Schema = mongoose.Schema;
 
@@ -34,7 +34,7 @@ let NgoSchema = new Schema({
         default : false
     },
     authenticationSecret: {
-        type: String   
+        type: String
     },
     coverPic:[{
         type: Schema.Types.ObjectId,
@@ -63,7 +63,7 @@ let NgoSchema = new Schema({
         ref: ''
     }],
     fundRaised:{
-      type:Number
+        type:Number
     },
     created_at: {
         type: Date,
@@ -87,5 +87,33 @@ let NgoSchema = new Schema({
 });
 
 
+var Ngo = mongoose.model('NgoSchema',NgoSchema );
+module.exports = Ngo
 
-module.exports  = mongoose.model('NgoSchema',NgoSchema );
+module.exports.createNgo = (newNgo, callback)=>{
+    bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(newNgo.password, salt, function(err, hash) {
+            // Store hash in your password DB.
+            newNgo.password = hash
+            // console.log(hash)
+            newNgo.save(callback)
+        });
+    });
+}
+
+module.exports.getNGOByNGOname = (ngoname, email, callback)=>{
+    User.findOne({$or: [{'ngoName': ngoname}, {'email': email}]}, callback)
+}
+
+// module.exports.getUserById = (id, callback)=>{
+//   User.findById(id, callback)
+// }
+
+
+module.exports.comparePassword = (pass1,pass2,callback)=>{
+    bcrypt.compare(pass1, pass2, (err, isMatch)=>{
+        if(err)
+            throw err
+        callback(null, isMatch)
+    })
+}
