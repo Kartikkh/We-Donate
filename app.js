@@ -4,33 +4,38 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose')
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-var user_api = require('./routes/user_api.js');
-
+var mongoose = require('mongoose');
+var userAuth = require('./routes/User/userAuth.js');
+var ngoAuth = require('./routes/Ngo/ngoAuth');
 var app = express();
+var secret = require('./config/DButil');
 
+
+app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect('mongodb://kartik:kartik@ds157584.mlab.com:57584/wedonate',(err)=>{
+
+mongoose.connect(secret.url,(err)=>{
     if(err){
-        console.log('Connection to MongoDB Failed!')
-        console.log(err)
+        console.log('Connection to MongoDB Failed!');
+        console.log(err);
     }
     else{
-        console.log('Connection to MongoDB Successfull!')
+        console.log('Connection to MongoDB Successfull!');
     }
-})
+});
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/user_api', user_api);
+
+app.use('/userAuth', userAuth);
+app.use('/ngoAuth',ngoAuth);
+
+
+
+
 
 
 var port = process.env.PORT || 8080;
