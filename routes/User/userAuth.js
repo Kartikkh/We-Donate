@@ -6,6 +6,13 @@ var bcrypt = require('bcrypt');
 var express = require('express');
 var app = express();
 var status = require('../../stubs/status');
+var validateToken = require('../../middleware/JsonToken.js');
+
+router.get('/me',validateToken, (req, res, next)=>{
+    return res.json({
+        Message: 'This is a test Route'
+    })
+})
 
 router.post('/signup',(req, res, next)=>{
 

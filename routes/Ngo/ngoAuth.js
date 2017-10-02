@@ -3,8 +3,13 @@ const Ngo = require('../../models/ngo.js');
 const jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var status  = require('../../stubs/status');
+var validateToken = require('../../middleware/JsonToken.js');
 
-
+router.get('/about',validateToken, (req, res, next)=>{
+    return res.json({
+        Message: 'This is a test Route'
+    })
+})
 
 router.post('/signup',(req, res, next)=>{
 
@@ -15,7 +20,7 @@ router.post('/signup',(req, res, next)=>{
     req.checkBody('contactNo', 'contactNumber is required').notEmpty();
     var errors = req.validationErrors();
     if (errors) {
-        res.json(status.field_missing);
+       return res.json(status.field_missing);
     }
     var newNgo = new Ngo({
         ngoName : req.body.ngoName,

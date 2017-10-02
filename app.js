@@ -11,22 +11,46 @@ var app = express();
 var helmet = require('helmet');
 var morgan = require('morgan');
 var expressValidator = require('express-validator');
+var https = require('https');
+var fs = require('fs');
+
+var HTTPSOptions = {
+    key  : fs.readFileSync('certificate/server.key'),
+    cert : fs.readFileSync('certificate/server.crt')
+ };
+
 var config = require('config');
 app.set('view engine', 'jade');
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+    next();
+});
+
 app.use(helmet());
 
-var options = {
+var MongoOptions = {
     server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
     replset: { socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 } }
 };
 
-mongoose.connect(config.DBHost, options);
+// config.DBHost
+mongoose.connect('mongodb://localhost/we-donate', MongoOptions, (err, db)=>{
+    if(err){
+        console.log("Connection to MongoStore could not be made", err);
+    }
+    else{
+        console.log("Connection to Mongo Store Successful");
+    }
+});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -67,11 +91,12 @@ app.use(function(err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.send({'error':'Not Found'});
 });
 
 
-app.listen(app.get('port'),(err)=>{
+
+https.createServer(HTTPSOptions, app).listen(app.get('port'),(err)=>{
     if(err)
         console.log(err)
     else
