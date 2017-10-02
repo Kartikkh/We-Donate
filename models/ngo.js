@@ -7,6 +7,7 @@ var NgoSchema = new Schema({
     ngoName : {
         required: true,
         type: String,
+        unique: true
     },
     regNo:{
         required: true,
