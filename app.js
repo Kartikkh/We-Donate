@@ -42,13 +42,7 @@ app.use('/userAuth', userAuth);
 app.use('/ngoAuth',ngoAuth);
 
 var port = process.env.PORT || 8080;
-app.set('port', port)
-app.listen(app.get('port'),(err)=>{
-    if(err)
-        console.log(err)
-    else
-        console.log('Server listening on '+app.get('port'))
-})
+app.set('port', port);
 
 app.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
@@ -75,5 +69,14 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+
+app.listen(app.get('port'),(err)=>{
+    if(err)
+        console.log(err)
+    else
+        console.log('Server listening on '+app.get('port'))
+})
+
 
 module.exports = app;
