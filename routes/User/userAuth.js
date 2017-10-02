@@ -54,7 +54,7 @@ router.post('/signup',(req, res, next)=>{
             User.createUser(newUser,(err,user)=>{
                 if(err)
                     throw err;
-                //generateToken  // console.log(user)
+                //generateToken  // console.log(user.controller)
 
                 jwt.sign({
                     username: req.body.username,
