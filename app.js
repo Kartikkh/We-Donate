@@ -8,36 +8,38 @@ var mongoose = require('mongoose');
 var userAuth = require('./routes/User/userAuth.js');
 var ngoAuth = require('./routes/Ngo/ngoAuth');
 var app = express();
-var secret = require('./config/config');
-
+var helmet = require('helmet');
+var morgan = require('morgan');
 var expressValidator = require('express-validator');
-
+var config = require('config');
 app.set('view engine', 'jade');
-app.use(logger('dev'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(helmet());
 
-mongoose.connect(secret.url,(err)=>{
-    if(err){
-        console.log('Connection to MongoDB Failed!');
-        console.log(err);
-    }
-    else{
-        console.log('Connection to MongoDB Successfull!');
-    }
-});
+var options = {
+    server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
+    replset: { socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 } }
+};
+
+mongoose.connect(config.DBHost, options);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+
+if(config.util.getEnv('NODE_ENV') !== 'test') {
+    //use morgan to log at command line
+    app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
+}
+
+
 
 app.use(expressValidator());
 app.use('/userAuth', userAuth);
 app.use('/ngoAuth',ngoAuth);
-
-
-
-
-
 
 var port = process.env.PORT || 8080;
 app.set('port', port)
