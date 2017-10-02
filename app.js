@@ -8,8 +8,9 @@ var mongoose = require('mongoose');
 var userAuth = require('./routes/User/userAuth.js');
 var ngoAuth = require('./routes/Ngo/ngoAuth');
 var app = express();
-var secret = require('./config/DButil');
+var secret = require('./config/config');
 
+var expressValidator = require('express-validator');
 
 app.set('view engine', 'jade');
 app.use(logger('dev'));
@@ -29,7 +30,7 @@ mongoose.connect(secret.url,(err)=>{
     }
 });
 
-
+app.use(expressValidator());
 app.use('/userAuth', userAuth);
 app.use('/ngoAuth',ngoAuth);
 

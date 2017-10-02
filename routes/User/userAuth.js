@@ -1,12 +1,25 @@
 const router = require('express').Router();
 var User  = require('../../models/user');
 var jwt = require('jsonwebtoken');
-var config = require('../../config/DButil');
+var config = require('../../config/config');
 var bcrypt = require('bcrypt');
 var express = require('express');
 var app = express();
+var status = require('../../stubs/status');
 
 router.post('/signup',(req, res, next)=>{
+
+    req.checkBody('name', 'name is required').notEmpty();
+    req.checkBody('username', 'Registration Number is Required').notEmpty();
+    req.checkBody('email', 'email is required').notEmpty();
+    req.checkBody('password', 'password is required').notEmpty();
+  //  req.checkBody('contactNo', 'contactNumber is required').notEmpty();
+
+    var errors = req.validationErrors();
+    if (errors) {
+        res.json(status.field_missing);
+    }
+
     var name = req.body.name,
         username = req.body.username,
         email = req.body.email,

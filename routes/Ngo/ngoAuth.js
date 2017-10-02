@@ -2,11 +2,21 @@ const router = require('express').Router();
 const Ngo = require('../../models/ngo.js');
 const jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
+var status  = require('../../stubs/status');
+
 
 
 router.post('/signup',(req, res, next)=>{
 
-
+    req.checkBody('ngoName', 'name is required').notEmpty();
+    req.checkBody('regNo', 'Registration Number is Required').notEmpty();
+    req.checkBody('email', 'email is required').notEmpty();
+    req.checkBody('password', 'password is required').notEmpty();
+    req.checkBody('contactNo', 'contactNumber is required').notEmpty();
+    var errors = req.validationErrors();
+    if (errors) {
+        res.json(status.field_missing);
+    }
     var newNgo = new Ngo({
         ngoName : req.body.ngoName,
         regNo : req.body.regNo,
@@ -21,6 +31,9 @@ router.post('/signup',(req, res, next)=>{
         address :req.body.address
 
     });
+
+
+
     Ngo.find( req.body.regNo , function(err , exits){
         console.log(exits);
         if(err){

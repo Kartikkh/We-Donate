@@ -5,6 +5,6 @@
 
 module.exports = {
     'url' : 'mongodb://kartik:kartik@ds157584.mlab.com:57584/wedonate',
-    'secret': 'tokenbasedAuthentication'
+
 
 };
