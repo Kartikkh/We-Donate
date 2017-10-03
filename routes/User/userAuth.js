@@ -29,7 +29,8 @@ const selfSignedConfigOptions = {
 var transporter = nodemailer.createTransport(selfSignedConfigOptions);
 
 
-/*router.post('/change_password/:email', validateToken, (req, res, next)=>{
+router.post('/change_password', validateToken, (req, res, next)=>{
+    /*console.log("Checking for Validation Errors");
     req.checkBody('oldPassword', 'Old Password is Required').notEmpty();
     req.checkBody('newPassword1', 'New password is required').notEmpty();
     req.checkBody('newPassword2', 'Confirm New password').notEmpty();
@@ -39,9 +40,10 @@ var transporter = nodemailer.createTransport(selfSignedConfigOptions);
     if (errors) {
         return res.json(status.field_missing);
     }
-    //HOW WILL I GET THE USER DETAILS 
-    //WE CAN TRY SAVING IT ON req OBJECT
-    User.getUserByUsername('',req.body.email,(err, existingUser)=>{
+    console.log("No Validation Errors");
+    */
+    //User details can be obtained by querying mongodb using email in req.decoded.email
+    User.getUserByUsername('',req.decoded.email,(err, existingUser)=>{
         if(err)
             throw err
         if(!existingUser){
@@ -51,27 +53,34 @@ var transporter = nodemailer.createTransport(selfSignedConfigOptions);
             })
         }
         if(existingUser){
-            if(existingUser.local.username != req.body.email){
-                res.json({
-                    Status: false,
-                    Message: 'User with such email Does not exist'
-                });
-            }
-            else if(!bcrypt.compareSync(req.body.oldPassword, existingUser.local.password))
+            console.log("User Found!!!");
+            console.log(req.body.oldPassword);
+            console.log(existingUser.local.password)
+            if(!bcrypt.compareSync(req.body.oldPassword, existingUser.local.password)){
+                console.log("new and Old Passwords Match");
                 res.json({
                     Status: false,
                     "Message":"Old Password Does Not Match!"
                 });
-            else if((existingUser.local.username == req.body.email)&&(existingUser.local.password == req.body.oldPassword)){
-                //Update the passwords
             }
-        }
-        else{
-            
+            else {
+                //Update the passwords
+                hash = bcrypt.hashSync(req.body.newPassword1,10);
+                existingUser.local.password = hash;
+                console.log('Saved hash to existingUser.local.password');
+                existingUser.save((err, updatedUser)=>{
+                    if(err){
+                        return res.status(status.dbError.response_code).send(status.dbError.reason);
+                    }
+                    else{
+                        return res.json({'Message': 'Your Password has been changed'});
+                    }
+                })
+            }
         }
     })
 })
-*/
+
 router.post('/signup',(req, res, next)=>{
 
     req.checkBody('name', 'name is required').notEmpty();
@@ -186,6 +195,7 @@ router.post('/login', function(req, res) {
         if (!passwordIsValid) return res.status(401).send({ auth: false, token: null, Message:'Your password is invalid!' });
         jwt.sign({
             username: req.body.username,
+            email: user.local.email
         },  'tokenbasedAuthentication', {
             expiresIn: 60*2
         },(err, token)=>{
@@ -195,7 +205,8 @@ router.post('/login', function(req, res) {
             else{
                 res.json({
                     'token' : token ,
-                    'success' : true
+                    'success' : true,
+                    'Message': 'You are logged in Now'
                 })
             }
         });
@@ -267,28 +278,3 @@ router.get('/verify/:verificationToken', (req, res, next)=>{
 
 module.exports = router;
 
-
-/*
-jwt.sign({
-            email: req.body.email,
-        },  'forgot_password', {
-            expiresIn: 60*60*24*7
-        },(err, token)=>{
-            if(err){
-                return res.json({
-                    status: false,
-                    message: "Sorry your request could not be processed. Try again later."
-                })
-            }
-            else{
-                var host = req.get('host');
-                var link = `https://${host}/verify${token}`;
-                var messageOptions = {
-                    from: 'We-Donate <clientservice@wedonate.com>',
-                    to: updatedUser.local.email,
-                    subject: 'Your Password Has Been Reset',
-                    html: `Hi,<br/>Please Click on this Link to reset`
-                }
-            }
-        });
-*/

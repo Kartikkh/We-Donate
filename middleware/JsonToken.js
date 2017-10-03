@@ -17,6 +17,8 @@ module.exports = function(req,res,next) {
                 });
             }
             req.decoded = decoded;
+            // console.log('DECODED is ')
+            // console.log(decoded);
             next(); //no error, proceed
         });
     } else {
