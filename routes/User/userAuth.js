@@ -86,7 +86,8 @@ router.post('/forgot_password', (req, res, next)=>{
     if (errors) {
         return res.json(status.field_missing);
     }
-
+    //HOW WILL I GET THE USER DETAILS 
+    //WE CAN TRY SAVING IT ON req OBJECT
     User.getUserByUsername('',req.body.email,(err, existingUser)=>{
         if(err)
             throw err
@@ -103,7 +104,7 @@ router.post('/forgot_password', (req, res, next)=>{
                     Message: 'User with such email Does not exist'
                 });
             }
-            else if(existingUser.local.password != req.body.oldPassword)
+            else if(!bcrypt.compareSync(req.body.oldPassword, existingUser.local.password))
                 res.json({
                     Status: false,
                     "Message":"Old Password Does Not Match!"
@@ -117,7 +118,6 @@ router.post('/forgot_password', (req, res, next)=>{
         }
     })
 })
-
 */
 router.post('/signup',(req, res, next)=>{
 
@@ -131,7 +131,7 @@ router.post('/signup',(req, res, next)=>{
     if (errors) {
         return res.json(status.field_missing);
     }
-
+    var verificationToken = cryptoRandomString(25);
     var name = req.body.name,
         username = req.body.username,
         email = req.body.email,
@@ -141,7 +141,8 @@ router.post('/signup',(req, res, next)=>{
             name: name,
             email: email,
             password: password,
-            username: username
+            username: username,
+            verificationToken: verificationToken
         },
         facebook: {
 
@@ -150,7 +151,7 @@ router.post('/signup',(req, res, next)=>{
     User.getUserByUsername(username,email,(err, existingUser)=>{
         if(err)
             throw err
-        console.log('EXISTING USER'+existingUser)
+        console.log('EXISTING USER '+existingUser)
         if(existingUser){
             if(existingUser.local.username == username){
                 res.json({
@@ -164,11 +165,13 @@ router.post('/signup',(req, res, next)=>{
         }
         else{
             User.createUser(newUser,(err,user)=>{
-                if(err)
-                    throw err;
+                if(err){
+                   return res.status(status.dbError.response_code).send(status.dbError.reason);
+                }
+                    
                 //generateToken  // console.log(user.controller)
 
-                jwt.sign({
+                /*jwt.sign({
                     username: req.body.username,
                 },  'tokenbasedAuthentication', {
                     expiresIn: 60*2
@@ -182,7 +185,31 @@ router.post('/signup',(req, res, next)=>{
                             'success' : true
                         })
                     }
-                });
+                });*/
+                //Send email and then response back to user
+                var host = req.get('host');
+                var link = `https://${host}/verify/${verificationToken}`;
+                console.log(link);
+                var messageOptions = {
+                    from: 'We-Donate <support@wedonate.com>',
+                    to: user.local.email,
+                    subject: 'Please Confirm Your Account',
+                    html: `Hi,<br/>Thanks for registering with us. Please confirm your account by following this <a href="${link}">LINK</a>.`
+                }
+                transporter.sendMail(messageOptions, (err)=>{
+                    if(err){
+                        console.log('Verification Email could not be sent')
+                        console.log(err)
+                        return res.json({
+                            status: false,
+                            message: "You have Signed-Up successfully, but Verification Email could not be Sent. Try again later."
+                        })
+                    }
+                    return res.json({
+                        status: true,
+                        message: "Registered Successfully. Please confirm your account by following the link in the email."
+                    })
+                })
             })
         }
     })

@@ -80,6 +80,13 @@ var notAllowed=
 		'message'	: 	'Not allowed to access this resource'
 	}
 };
+var dbError = {
+	response_code: 503,
+	reason:{
+		status: false,
+		message: "Sorry your request could not be processed. Try again later."
+	}
+}
 
 
 module.exports=

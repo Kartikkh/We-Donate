@@ -23,6 +23,13 @@ var userSchema = new Schema({
             city: String,
             state: String,
             country: String
+          },
+          isVerified: {
+            type: Boolean,
+            default: false
+          },
+          verificationToken: {
+            type: String
           }
       },
       facebook: {
