@@ -177,10 +177,13 @@ router.post('/login', function(req, res) {
         if(err)
             throw(err);
         if(!user)
-            res.json({ success: false, message: 'Authentication failed. User not found.'});
+            return res.json({ success: false, message: 'Authentication failed. User not found.'});
         console.log(user.local.password);
+        //Check if Account is Verified or not
+        console.log('Verification Status '+user.local.isVerified);
+        if(user.local.isVerified){
         var passwordIsValid = bcrypt.compareSync(req.body.password, user.local.password);
-        if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
+        if (!passwordIsValid) return res.status(401).send({ auth: false, token: null, Message:'Your password is invalid!' });
         jwt.sign({
             username: req.body.username,
         },  'tokenbasedAuthentication', {
@@ -196,6 +199,10 @@ router.post('/login', function(req, res) {
                 })
             }
         });
+    }
+    else{
+        return res.status(401).send({'Message': 'First Verify Your Account'});
+    }
     });
 
 });
