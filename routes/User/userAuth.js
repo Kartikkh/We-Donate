@@ -29,53 +29,6 @@ const selfSignedConfigOptions = {
 var transporter = nodemailer.createTransport(selfSignedConfigOptions);
 
 
-router.post('/forgot_password', (req, res, next)=>{
-    var newPassword = cryptoRandomString(8);
-    console.log(newPassword);
-    console.log(req.body.email);
-    bcrypt.hash(newPassword, 10, function(err, hash) {
-        // Store hash in database
-    console.log(hash);
-    User.findOneAndUpdate({'local.email': req.body.email},{$set:{'local.password': hash}}, {new: true},(err, updatedUser)=>{
-        if(err){
-            return res.json({
-                status: false,
-                message: "Sorry your request could not be processed. Try again later."
-            })
-        }
-        console.log('Updated User');
-        console.log(updatedUser);
-        if(!updatedUser){
-            return res.json({ 
-                success: false, 
-                message: 'No Such User Found.'
-            });
-        }
-        //Send email and then response back to user
-        var messageOptions = {
-            from: 'We-Donate <support@wedonate.com>',
-            to: updatedUser.local.email,
-            subject: 'Your Password Has Been Reset',
-            html: `Hi,<br/>Your new password is ${newPassword}.`
-        }
-        transporter.sendMail(messageOptions, (err)=>{
-            if(err){
-                console.log('Forgot Password Email could not be sent')
-                console.log(err)
-                return res.json({
-                    status: false,
-                    message: "Sorry your request could not be processed. Try again later."
-                })
-            }
-            return res.json({
-                status: true,
-                message: "Your password has been reset. Check your email for your new password."
-            })
-        })
-    })
-})
-})
-
 /*router.post('/change_password/:email', validateToken, (req, res, next)=>{
     req.checkBody('oldPassword', 'Old Password is Required').notEmpty();
     req.checkBody('newPassword1', 'New password is required').notEmpty();
@@ -188,7 +141,7 @@ router.post('/signup',(req, res, next)=>{
                 });*/
                 //Send email and then response back to user
                 var host = req.get('host');
-                var link = `https://${host}/verify/${verificationToken}`;
+                var link = `https://${host}/userAuth/verify/${verificationToken}`;
                 console.log(link);
                 var messageOptions = {
                     from: 'We-Donate <support@wedonate.com>',
@@ -247,7 +200,63 @@ router.post('/login', function(req, res) {
 
 });
 
+router.post('/forgot_password', (req, res, next)=>{
+    var newPassword = cryptoRandomString(8);
+    console.log(newPassword);
+    console.log(req.body.email);
+    bcrypt.hash(newPassword, 10, function(err, hash) {
+        // Store hash in database
+    console.log(hash);
+    User.findOneAndUpdate({'local.email': req.body.email},{$set:{'local.password': hash}}, {new: true},(err, updatedUser)=>{
+        if(err){
+            return res.json({
+                status: false,
+                message: "Sorry your request could not be processed. Try again later."
+            })
+        }
+        console.log('Updated User');
+        console.log(updatedUser);
+        if(!updatedUser){
+            return res.json({ 
+                success: false, 
+                message: 'No Such User Found.'
+            });
+        }
+        //Send email and then response back to user
+        var messageOptions = {
+            from: 'We-Donate <support@wedonate.com>',
+            to: updatedUser.local.email,
+            subject: 'Your Password Has Been Reset',
+            html: `Hi,<br/>Your new password is ${newPassword}.`
+        }
+        transporter.sendMail(messageOptions, (err)=>{
+            if(err){
+                console.log('Forgot Password Email could not be sent')
+                console.log(err)
+                return res.json({
+                    status: false,
+                    message: "Sorry your request could not be processed. Try again later."
+                })
+            }
+            return res.json({
+                status: true,
+                message: "Your password has been reset. Check your email for your new password."
+            })
+        })
+    })
+})
+})
 
+router.get('/verify/:verificationToken', (req, res, next)=>{
+    User.findOneAndUpdate({'local.verificationToken': req.params.verificationToken}, {$set: {'local.isVerified': true}}, {new: true}, (err, user)=>{
+        if(err){
+            return res.status(status.dbError.response_code).send(status.dbError.reason);
+        }
+        else{
+            return res.status(200).send({'Message': 'You successfully verified your account. You can login now.'});
+        }
+    })
+})
 
 module.exports = router;
 
