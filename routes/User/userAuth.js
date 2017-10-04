@@ -276,5 +276,36 @@ router.get('/verify/:verificationToken', (req, res, next)=>{
     })
 })
 
+router.post('/resend_email', (req, res, next)=>{
+    User.findOne({'local.email': req.body.email}, (err, user)=>{
+        if(err){
+            return res.status(status.dbError.response_code).send(status.dbError.reason)
+        }
+        var host = req.get('host');
+        var link = `https://${host}/userAuth/verify/${user.local.verificationToken}`;
+        console.log(link);
+        var messageOptions = {
+            from: 'We-Donate <support@wedonate.com>',
+            to: user.local.email,
+            subject: 'Please Confirm Your Account',
+            html: `Hi,<br/>Thanks for registering with us. Please confirm your account by following this <a href="${link}">LINK</a>.`
+        }
+        transporter.sendMail(messageOptions, (err)=>{
+            if(err){
+                console.log('Verification Email could not be sent')
+                console.log(err)
+                return res.json({
+                    status: false,
+                    message: "You have Signed-Up successfully, but Verification Email could not be Sent. Try again later."
+                })
+            }
+            return res.json({
+                status: true,
+                message: "Verification Email Sent to your Email Successfully. Please confirm your account by following the link in the email."
+            })
+        })
+    })
+})
+
 module.exports = router;
 
