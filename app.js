@@ -43,7 +43,7 @@ var MongoOptions = {
 };
 
 // config.DBHost
-mongoose.connect('mongodb://localhost/we-donate', MongoOptions, (err, db)=>{
+mongoose.connect(config.DBHost, MongoOptions, (err, db)=>{
     if(err){
         console.log("Connection to MongoStore could not be made", err);
     }
@@ -101,7 +101,7 @@ https.createServer(HTTPSOptions, app).listen(app.get('port'),(err)=>{
         console.log(err)
     else
         console.log('Server listening on '+app.get('port'))
-})
+});
 
 
 module.exports = app;
