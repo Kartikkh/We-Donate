@@ -1,20 +1,16 @@
 const router = require('express').Router();
 var User  = require('../../models/user');
 var jwt = require('jsonwebtoken');
-
+var nodemailer = require('nodemailer');
 var bcrypt = require('bcrypt');
 var express = require('express');
 var app = express();
 var status = require('../../stubs/status');
 var validateToken = require('../../middleware/JsonToken.js');
-var nodemailer = require('nodemailer')
+
 const cryptoRandomString = require('crypto-random-string');
 
-router.get('/me',validateToken, (req, res, next)=>{
-    return res.json({
-        Message: 'This is a test Route'
-    })
-})
+
 
 const selfSignedConfigOptions = {
     host: 'smtp.wedonate.com',
@@ -35,7 +31,6 @@ router.post('/change_password', validateToken, (req, res, next)=>{
     req.checkBody('newPassword1', 'New password is required').notEmpty();
     req.checkBody('newPassword2', 'Confirm New password').notEmpty();
     req.checkBody('newPassword2','New Passwords Do Not Match').equals(newPassword1)
-
     var errors = req.validationErrors();
     if (errors) {
         return res.json(status.field_missing);
@@ -49,7 +44,7 @@ router.post('/change_password', validateToken, (req, res, next)=>{
         if(!existingUser){
             return res.json({
                 Status: false,
-                Message: 'User with such email Does not exist' 
+                Message: 'User with such email Does not exist'
             })
         }
         if(existingUser){
@@ -87,7 +82,7 @@ router.post('/signup',(req, res, next)=>{
     req.checkBody('username', 'Registration Number is Required').notEmpty();
     req.checkBody('email', 'email is required').notEmpty();
     req.checkBody('password', 'password is required').notEmpty();
-  //  req.checkBody('contactNo', 'contactNumber is required').notEmpty();
+    //  req.checkBody('contactNo', 'contactNumber is required').notEmpty();
 
     var errors = req.validationErrors();
     if (errors) {
@@ -117,7 +112,7 @@ router.post('/signup',(req, res, next)=>{
         if(existingUser){
             if(existingUser.local.username == username){
                 res.json({
-                   "message":"Username Allready exits"
+                    "message":"Username Allready exits"
                 });
             }
             else
@@ -128,9 +123,9 @@ router.post('/signup',(req, res, next)=>{
         else{
             User.createUser(newUser,(err,user)=>{
                 if(err){
-                   return res.status(status.dbError.response_code).send(status.dbError.reason);
+                    return res.status(status.dbError.response_code).send(status.dbError.reason);
                 }
-                    
+
                 //generateToken  // console.log(user.controller)
 
                 /*jwt.sign({
@@ -180,7 +175,7 @@ router.post('/signup',(req, res, next)=>{
 
 router.post('/login', function(req, res) {
 
-        var username= req.body.username;
+    var username= req.body.username;
     User.getUserByUsername(username,'',(err, user)=>{
 
         if(err)
@@ -191,29 +186,29 @@ router.post('/login', function(req, res) {
         //Check if Account is Verified or not
         console.log('Verification Status '+user.local.isVerified);
         if(user.local.isVerified){
-        var passwordIsValid = bcrypt.compareSync(req.body.password, user.local.password);
-        if (!passwordIsValid) return res.status(401).send({ auth: false, token: null, Message:'Your password is invalid!' });
-        jwt.sign({
-            username: req.body.username,
-            email: user.local.email
-        },  'tokenbasedAuthentication', {
-            expiresIn: 60*2
-        },(err, token)=>{
-            if(err){
-                throw err;
-            }
-            else{
-                res.json({
-                    'token' : token ,
-                    'success' : true,
-                    'Message': 'You are logged in Now'
-                })
-            }
-        });
-    }
-    else{
-        return res.status(401).send({'Message': 'First Verify Your Account'});
-    }
+            var passwordIsValid = bcrypt.compareSync(req.body.password, user.local.password);
+            if (!passwordIsValid) return res.status(401).send({ auth: false, token: null, Message:'Your password is invalid!' });
+            jwt.sign({
+                username: req.body.username,
+                email: user.local.email
+            },  'tokenbasedAuthentication', {
+                expiresIn: 60*2
+            },(err, token)=>{
+                if(err){
+                    throw err;
+                }
+                else{
+                    res.json({
+                        'token' : token ,
+                        'success' : true,
+                        'Message': 'You are logged in Now'
+                    })
+                }
+            });
+        }
+        else{
+            return res.status(401).send({'Message': 'First Verify Your Account'});
+        }
     });
 
 });
@@ -224,45 +219,45 @@ router.post('/forgot_password', (req, res, next)=>{
     console.log(req.body.email);
     bcrypt.hash(newPassword, 10, function(err, hash) {
         // Store hash in database
-    console.log(hash);
-    User.findOneAndUpdate({'local.email': req.body.email},{$set:{'local.password': hash}}, {new: true},(err, updatedUser)=>{
-        if(err){
-            return res.json({
-                status: false,
-                message: "Sorry your request could not be processed. Try again later."
-            })
-        }
-        console.log('Updated User');
-        console.log(updatedUser);
-        if(!updatedUser){
-            return res.json({ 
-                success: false, 
-                message: 'No Such User Found.'
-            });
-        }
-        //Send email and then response back to user
-        var messageOptions = {
-            from: 'We-Donate <support@wedonate.com>',
-            to: updatedUser.local.email,
-            subject: 'Your Password Has Been Reset',
-            html: `Hi,<br/>Your new password is ${newPassword}.`
-        }
-        transporter.sendMail(messageOptions, (err)=>{
+        console.log(hash);
+        User.findOneAndUpdate({'local.email': req.body.email},{$set:{'local.password': hash}}, {new: true},(err, updatedUser)=>{
             if(err){
-                console.log('Forgot Password Email could not be sent')
-                console.log(err)
                 return res.json({
                     status: false,
                     message: "Sorry your request could not be processed. Try again later."
                 })
             }
-            return res.json({
-                status: true,
-                message: "Your password has been reset. Check your email for your new password."
+            console.log('Updated User');
+            console.log(updatedUser);
+            if(!updatedUser){
+                return res.json({
+                    success: false,
+                    message: 'No Such User Found.'
+                });
+            }
+            //Send email and then response back to user
+            var messageOptions = {
+                from: 'We-Donate <support@wedonate.com>',
+                to: updatedUser.local.email,
+                subject: 'Your Password Has Been Reset',
+                html: `Hi,<br/>Your new password is ${newPassword}.`
+            }
+            transporter.sendMail(messageOptions, (err)=>{
+                if(err){
+                    console.log('Forgot Password Email could not be sent')
+                    console.log(err)
+                    return res.json({
+                        status: false,
+                        message: "Sorry your request could not be processed. Try again later."
+                    })
+                }
+                return res.json({
+                    status: true,
+                    message: "Your password has been reset. Check your email for your new password."
+                })
             })
         })
     })
-})
 })
 
 router.get('/verify/:verificationToken', (req, res, next)=>{
@@ -308,4 +303,3 @@ router.post('/resend_email', (req, res, next)=>{
 })
 
 module.exports = router;
-

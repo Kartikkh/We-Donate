@@ -109,5 +109,8 @@ module.exports.getNGOByNGOname = (regNo, callback)=>{
 module.exports.getUserById = (id, callback)=>{
   Ngo.findById(id, callback)
 };
+module.exports.getNgoByEmail=(email,callback)=>{
+  Ngo.findOne({'email':email},callback)
+};
 
 
