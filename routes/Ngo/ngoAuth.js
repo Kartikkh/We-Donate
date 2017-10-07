@@ -31,11 +31,12 @@ var transporter = nodemailer.createTransport(selfSignedConfigOptions);
 
 
 router.post('/login',(req,res,next)=>{
-    var regNo = req.body.username;
-    Ngo.findOne(regNo, function (err , result) {
+    var regNo = req.body.regNo;
+    console.log(regNo);
+    Ngo.findOne( {'regNo':regNo}, function (err , result) {
         if(err){
             console.log(err);
-        }else if(!result){
+        }else if(result==null){
             res.json("does not exits")
         }else{
             var passwordIsValid = bcrypt.compareSync(req.body.password, result.password);
@@ -70,9 +71,9 @@ router.post('/signup',(req, res, next)=>{
     req.checkBody('contactNo', 'contactNumber is required').notEmpty();
     var errors = req.validationErrors();
     if (errors) {
-        return res.json(status.field_missing);
+        res.send(errors);
+        return;
     }
-
     var verificationToken = cryptoRandomString(25);
 
     var newNgo = new Ngo({
@@ -92,34 +93,35 @@ router.post('/signup',(req, res, next)=>{
     });
 
 
-
-    Ngo.find( req.body.regNo , function(err , exits){
+console.log(req.body.regNo);
+    Ngo.findOne( {'regNo':req.body.regNo} , function(err , exits){
         console.log(exits);
         if(err){
             res.json(error);
-        }else if( req.body.regNo =exits.regNo ){
+        }
+        else if( exits !==null ){
             res.json("exits");
-        }else{
+        }
+        else{
             console.log("there");
             Ngo.createNgo(newNgo,(err,ngo)=>{
                 if(err)
                     throw err;
                 else{
-
                     var host = req.get('host');
-                    var link = `https://${host}/NgoAuth/verify/${verificationToken}`;
+                    var link = `https://${host}/ngoAuth/verify/${verificationToken}`;
                     console.log(link);
                     var messageOptions = {
                         from: 'We-Donate <support@wedonate.com>',
-                        to: user.local.email,
+                        to:ngo.email,
                         subject: 'Please Confirm Your Account',
                         html: `Hi,<br/>Thanks for registering with us. Please confirm your account by following this <a href="${link}">LINK</a>.`
-                    }
+                    };
 
                     transporter.sendMail(messageOptions, (err)=>{
                         if(err){
                             console.log('Verification Email could not be sent');
-                            console.log(err)
+                            console.log(err);
                             return res.json({
                                 status: false,
                                 message: "You have Signed-Up successfully, but Verification Email could not be Sent. Try again later."
@@ -130,8 +132,6 @@ router.post('/signup',(req, res, next)=>{
                             message: "Registered Successfully. Please confirm your account by following the link in the email."
                         })
                     })
-
-
                 }
             })
 
@@ -159,11 +159,11 @@ router.post('/resend_email', (req, res, next)=>{
             return res.status(status.dbError.response_code).send(status.dbError.reason)
         }
         var host = req.get('host');
-        var link = `https://${host}/NgoAuth/verify/${ngo.authenticationSecret}`;
+        var link = `https://${host}/ngoAuth/verify/${ngo.authenticationSecret}`;
         console.log(link);
         var messageOptions = {
             from: 'We-Donate <support@wedonate.com>',
-            to: user.local.email,
+            to: ngo.email,
             subject: 'Please Confirm Your Account',
             html: `Hi,<br/>Thanks for registering with us. Please confirm your account by following this <a href="${link}">LINK</a>.`
         }
@@ -245,12 +245,12 @@ router.post('/forgot_password', (req, res, next)=>{
             res.json(status.dbError);
         }else{
             var host = req.get('host');
-            var link = `https://${host}/NgoAuth/ForgotPassword/${ngo.authenticationSecret}`;
+            var link = `https://${host}/ngoAuth/ForgotPassword/${ngo.authenticationSecret}`;
             var messageOptions = {
                 from: 'We-Donate <support@wedonate.com>',
-                to: user.local.email,
+                to: ngo.email,
                 subject: 'Please Confirm Your Account For change Password Request',
-                html: `Hi,<br/>Thanks for registering with us. Please confirm your account by following this <a href="${link}">LINK</a>.`
+                html: `Hi,<br/>Please Click on the following Link to change the Password <a href="${link}">LINK</a>.`
             }
             transporter.sendMail(messageOptions, (err)=>{
                 if(err){
@@ -269,6 +269,26 @@ router.post('/forgot_password', (req, res, next)=>{
 });
 
 
+router.post('/forgotPassword/authenticationLink',(req,res,next)=>{
+
+    req.checkBody('newPassword', 'New Password is required').notEmpty();
+    var errors = req.validationErrors();
+    if (errors) {
+        return res.json(status.field_missing);
+    }
+    hash = bcrypt.hashSync(req.body.newPassword1,10);
+    Ngo.findOneAndUpdate({'authenticationSecret':req.params.authenticationLink}, {$set: {'password':hash}}, {new: true},(err,ngo)=> {
+        if(err){
+            return res.status(status.dbError.response_code).send(status.dbError.reason);
+        }else if(ngo==null || ngo==undefined){
+            return res.status(status.Mailed);
+        }else{
+            return res.status(200).send({'Message': 'You Password has Successfully changed'});
+        }
+    })
+
+
+});
 
 
 
