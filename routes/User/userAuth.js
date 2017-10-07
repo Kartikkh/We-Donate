@@ -14,7 +14,7 @@ router.get('/me',validateToken, (req, res, next)=>{
     return res.json({
         Message: 'This is a test Route'
     })
-})
+});
 
 const selfSignedConfigOptions = {
     host: 'smtp.wedonate.com',
@@ -292,8 +292,6 @@ router.post('/resend_email', (req, res, next)=>{
         }
         transporter.sendMail(messageOptions, (err)=>{
             if(err){
-                console.log('Verification Email could not be sent')
-                console.log(err)
                 return res.json({
                     status: false,
                     message: "You have Signed-Up successfully, but Verification Email could not be Sent. Try again later."

@@ -47,18 +47,26 @@ var server_failiure_not_Logged_properly=
 {
 	response_code : 508,
 	reason    :     {
-		'message' : 'There\'s an error processing request.Error Looped around and couldnt be logged properly, please contact at help@tripshire.com for more details',
+		'message' : 'There\'s an error processing request.Please try again later',
 		'status'  : false,
 	}
 };
-var data_not_found=
+var email=
 {
 	response_code : 404,
 	reason    :     {
-		'message' : 'Required Content not Found',
+		'message' : 'Required Email not correct! Please enter valid EmailId',
 		'status'  : false,
 	}
 };
+var RegNo=
+    {
+        response_code : 404,
+        reason    :     {
+            'message' : 'Required Registration Number not correct! Please enter valid Registration Number',
+            'status'  : false,
+        }
+    };
 var success=
 {
 	response_code : 200,
@@ -97,8 +105,10 @@ module.exports=
 	Parked 					: server_failiure_error_Parked,
 	Mailed					: server_failiure_mail_Sent,
 	notLogged               : server_failiure_not_Logged_properly,
-	noData					: data_not_found,
+	email					: email,
 	success					: success,
 	archived				: archived,
-	notAllowed				: notAllowed
+	notAllowed				: notAllowed,
+	RegNo 					: RegNo,
+    dbError   				: dbError
 }
