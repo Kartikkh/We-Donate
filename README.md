@@ -1,5 +1,5 @@
 ### WE Donate
-Lets come togeather to donate for a cause. 
+Lets come together to donate for a cause. 
 
 
 ##### Installation
