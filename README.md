@@ -1,6 +1,8 @@
-#### WE Donate
+### WE Donate
+Lets come togeather to donate for a cause. 
 
-### Installation
+
+##### Installation
 
 We Donate requires [Node.js](https://nodejs.org/) v6+ to run.
 
@@ -32,3 +34,4 @@ Use postman for checking the API endpoints
 - [ ]  Redis Caching with Mongoose 
 - [x]  Adding Headers Security 
 - [x] Sign Up process with Email Authentication
+- [ ] Adding Ngnix for load balancing and caching support
