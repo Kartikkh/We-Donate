@@ -27,7 +27,7 @@ Use postman for checking the API endpoints
 #### To Do
 - [x] Adding JWT Authentication 
 - [ ]  Adding Social logins  
-- [ ]  Unit Tests 
+- [x]  Unit Tests 
 - [ ]  Node cluster module to implement concurrency 
 - [x]  Https server 
 - [ ]  Real time With Pusher  
@@ -35,3 +35,4 @@ Use postman for checking the API endpoints
 - [x]  Adding Headers Security 
 - [x] Sign Up process with Email Authentication
 - [ ] Adding Ngnix for load balancing and caching support
+- [ ] Partitioning Database 
