@@ -1,5 +1,5 @@
 # WE Donate
-> Lets come together to donate for a cause. 
+> Lets come together to donate for a cause. We are trying a create a social network platform so that people willing to donate anything can get all information about events being organized by NGOs in there region/localities. They can follow, like, comment on events and share events being organized by NGOs through other social media platforms like facebook, whatsapp, twitter, etc. The users who have already subscribed to NGOs will get live feeds about the events. 
 
 ## Requirements
 
