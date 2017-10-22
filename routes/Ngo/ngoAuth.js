@@ -42,7 +42,7 @@ router.post('/login',(req,res,next)=>{
             var passwordIsValid = bcrypt.compareSync(req.body.password, result.password);
             if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
             jwt.sign({
-                username: req.body.username,
+                username: req.body.regNo,
             },  'tokenbasedAuthentication', {
                 expiresIn: 60*2
             },(err, token)=>{

@@ -9,10 +9,11 @@ const expressValidator = require('express-validator');
 const config = require('config');
 
 const app = express();
-
+const JWTvalidation =  require('./middleware/JsonToken');
 const userAuth = require('./routes/User/userAuth.js');
 const ngoAuth = require('./routes/Ngo/ngoAuth');
-
+const ngoEvent =  require('./routes/Ngo/ngoEvents');
+const ngoProfile = require('./routes/Ngo/ngoProfile');
 app.set('view engine', 'jade');
 
 app.use(bodyParser.json());
@@ -64,8 +65,11 @@ if (config.util.getEnv('NODE_ENV') !== 'test') {
 app.use(expressValidator());
 app.use('/userAuth', userAuth);
 app.use('/ngoAuth', ngoAuth);
-app.use('/ngoEvent',require('./routes/Ngo/ngoEvents'));
-app.use('ngoProfile',require('./routes/Ngo/ngoProfile'));
+
+app.use(JWTvalidation);
+
+app.use('/ngoEvent', ngoEvent);
+app.use('/ngoProfile',ngoProfile);
 
 const port = process.env.PORT || 3000;
 app.set('port', port);
