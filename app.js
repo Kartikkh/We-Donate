@@ -64,6 +64,8 @@ if (config.util.getEnv('NODE_ENV') !== 'test') {
 app.use(expressValidator());
 app.use('/userAuth', userAuth);
 app.use('/ngoAuth', ngoAuth);
+app.use('/ngoEvent',require('./routes/Ngo/ngoEvents'));
+app.use('ngoProfile',require('./routes/Ngo/ngoProfile'));
 
 const port = process.env.PORT || 3000;
 app.set('port', port);

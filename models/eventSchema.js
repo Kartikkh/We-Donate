@@ -28,10 +28,12 @@ var eventSchema = new Schema({
     }],
 
     contactNo : String,
+    time : String ,
 
 
     created_at: {
         type: Date,
+        default: Date.now
     },
 
     going : {
@@ -50,8 +52,21 @@ var eventSchema = new Schema({
 });
 
 
-var event = mongoose.model('eventSchema',eventSchema );
+const event = mongoose.model('eventSchema',eventSchema );
 module.exports = event;
+
+
+module.exports.saveEvent = (newEvent , callback)=>{
+   newEvent.save(callback);
+};
+
+module.exports.findEvent = (id , callback)=>{
+    event.findOne(id , callback);
+};
+
+module.exports.findEventAndRemove = (id , callback)=>{
+    event.findOne(id , callback);
+};
 
 
 

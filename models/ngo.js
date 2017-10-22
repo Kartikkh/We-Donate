@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
-
+var Event = require('./eventSchema');
 var Schema = mongoose.Schema;
+var User = require('./user');
+
 
 var NgoSchema = new Schema({
     ngoName : {
@@ -43,7 +45,7 @@ var NgoSchema = new Schema({
     }],
     events:[{
         type: Schema.Types.ObjectId,
-        ref: ''
+        ref: 'Event'
     }],
     email:{
         type: String, //unique
@@ -80,6 +82,10 @@ var NgoSchema = new Schema({
             type: String
         }
     },
+    followers:[{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     followersCount : {
         type:Number,
         default:0
@@ -106,7 +112,7 @@ module.exports.getNGOByNGOname = (regNo, callback)=>{
     Ngo.findOne(regNo, callback)
 };
 
-module.exports.getUserById = (id, callback)=>{
+module.exports.getNgoById = (id, callback)=>{
   Ngo.findById(id, callback)
 };
 module.exports.getNgoByEmail=(email,callback)=>{

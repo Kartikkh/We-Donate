@@ -8,6 +8,7 @@
     "test": "mocha --timeout 10000 || true"
   },
   "dependencies": {
+    "async": "^2.5.0",
     "bcrypt": "^1.0.3",
     "body-parser": "~1.17.1",
     "config": "^1.26.2",
