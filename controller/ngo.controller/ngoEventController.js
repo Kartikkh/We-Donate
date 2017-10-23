@@ -1,24 +1,25 @@
 'use strict';
-const Events = require('../../models/eventSchema');
-const Ngo = require('../../models/ngo');
+const Events = require('../../models/Ngo/eventSchema');
+const Ngo = require('../../models/Ngo/ngo');
 const async = require('async');
+var jwt = require('jsonwebtoken');
 
 
 module.exports.postEvent = (req,res) => {
-
-  Events.saveEvent(req.body , (err,saveEvent)=>{
+   Events.saveEvent(req.body , (err,saveEvent)=>{
 
       var response = {
           status : 500,
           message : err
       };
+      var id = req.userId;
 
       if(err){
           res.status(response.status)
               .json(response.message);
       }else {
           // find the data of Ngo from token and
-            Ngo.getNgoById(id ,(err,ngo)=>{
+            Ngo.getNGOByNGOname(id ,(err,ngo)=>{
                 if(err){
                     res.status(response.status)
                         .json(response.message);

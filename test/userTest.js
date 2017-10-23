@@ -8,7 +8,7 @@ const { expect } = chai;
 const should = chai.should();
 
 const app = require('../app');
-const Ngo = require('../models/user');
+const Ngo = require('../models/User/user');
 
 chai.use(chaiHttp);
 

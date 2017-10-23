@@ -1,5 +1,5 @@
 const router = require('express').Router();
-var User  = require('../../models/user');
+var User  = require('../../models/User/user');
 var jwt = require('jsonwebtoken');
 var nodemailer = require('nodemailer');
 var bcrypt = require('bcrypt');
@@ -191,7 +191,7 @@ router.post('/login', function(req, res) {
             jwt.sign({
                 username: req.body.username,
                 email: user.local.email
-            },  'tokenbasedAuthentication', {
+            },   process.env.secretKey, {
                 expiresIn: 60*2
             },(err, token)=>{
                 if(err){

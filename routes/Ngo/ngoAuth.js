@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Ngo = require('../../models/ngo.js');
+const Ngo = require('../../models/Ngo/ngo.js');
 const jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var status  = require('../../stubs/status');
@@ -43,7 +43,7 @@ router.post('/login',(req,res,next)=>{
             if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
             jwt.sign({
                 username: req.body.regNo,
-            },  'tokenbasedAuthentication', {
+            },   process.env.secretKey, {
                 expiresIn: 60*2
             },(err, token)=>{
                 if(err){

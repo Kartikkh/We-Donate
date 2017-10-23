@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var Event = require('./eventSchema');
 var Schema = mongoose.Schema;
-var User = require('./user');
-
+var User = require('../User/user');
+var Stories = require('./stories');
 
 var NgoSchema = new Schema({
     ngoName : {
@@ -63,7 +63,7 @@ var NgoSchema = new Schema({
     },
     stories:[{
         type: Schema.Types.ObjectId,
-        ref: ''
+        ref: 'Stories'
     }],
     fundRaised:{
         type:Number
@@ -112,9 +112,10 @@ module.exports.getNGOByNGOname = (regNo, callback)=>{
     Ngo.findOne(regNo, callback)
 };
 
-module.exports.getNgoById = (id, callback)=>{
-  Ngo.findById(id, callback)
-};
+//module.exports.getNgoById = (id, callback)=>{
+  //Ngo.findById(id, callback)
+//};
+
 module.exports.getNgoByEmail=(email,callback)=>{
   Ngo.findOne({'email':email},callback)
 };

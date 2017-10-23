@@ -57,6 +57,12 @@ mongoose.connect(config.DBHost, MongoOptions, (err, db) => {
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
+
+
+if(config.util.getEnv('NODE_ENV') !== 'production'){
+    require('dotenv').load();
+}
+
 if (config.util.getEnv('NODE_ENV') !== 'test') {
     // use morgan to log at command line
     app.use(morgan('combined')); // 'combined' outputs the Apache style LOGs
