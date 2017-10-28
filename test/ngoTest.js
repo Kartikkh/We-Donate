@@ -25,7 +25,7 @@ describe('NGO TEST', () => {
             chai.request(app)
                 .get('/ngoAuth/login')
                 .end((err, res) => {
-                    res.should.have.status(404);
+                    res.should.have.status(403);
                     done();
                 });
         });

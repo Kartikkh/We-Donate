@@ -55,7 +55,7 @@ router.post('/change_password', validateToken, (req, res, next)=>{
                 console.log("new and Old Passwords Match");
                 res.json({
                     Status: false,
-                    "Message":"Old Password Does Not Match!"
+                    Message:"Old Password Does Not Match!"
                 });
             }
             else {
@@ -83,7 +83,7 @@ router.post('/signup',(req, res, next)=>{
     req.checkBody('email', 'email is required').notEmpty();
     req.checkBody('password', 'password is required').notEmpty();
     //  req.checkBody('contactNo', 'contactNumber is required').notEmpty();
-
+    console.log(req.body);
     var errors = req.validationErrors();
     if (errors) {
         return res.json(status.field_missing);
@@ -111,39 +111,18 @@ router.post('/signup',(req, res, next)=>{
         console.log('EXISTING USER '+existingUser)
         if(existingUser){
             if(existingUser.local.username == username){
-                res.json({
-                    "message":"Username Allready exits"
-                });
+                res.json("Username Already exits");
             }
             else
-                res.json({
-                    "message":"Email Allready exits"
-                });
+                res.json(
+                    "Email Already exits"
+                );
         }
         else{
             User.createUser(newUser,(err,user)=>{
                 if(err){
                     return res.status(status.dbError.response_code).send(status.dbError.reason);
                 }
-
-                //generateToken  // console.log(user.controller)
-
-                /*jwt.sign({
-                    username: req.body.username,
-                },  'tokenbasedAuthentication', {
-                    expiresIn: 60*2
-                },(err, token)=>{
-                    if(err){
-                        throw err;
-                    }
-                    else{
-                        res.json({
-                            'token' : token ,
-                            'success' : true
-                        })
-                    }
-                });*/
-                //Send email and then response back to user
                 var host = req.get('host');
                 var link = `https://${host}/userAuth/verify/${verificationToken}`;
                 console.log(link);
@@ -155,12 +134,11 @@ router.post('/signup',(req, res, next)=>{
                 }
                 transporter.sendMail(messageOptions, (err)=>{
                     if(err){
-                        console.log('Verification Email could not be sent')
-                        console.log(err)
-                        return res.json({
-                            status: false,
-                            message: "You have Signed-Up successfully, but Verification Email could not be Sent. Try again later."
-                        })
+                        console.log('Verification Email could not be sent');
+                        console.log(err);
+                        return res.json(
+                             "You have Signed-Up successfully, but Verification Email could not be Sent. Try again later."
+                        )
                     }
                     return res.json({
                         status: true,

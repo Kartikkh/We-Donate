@@ -95,15 +95,14 @@ router.post('/signup',(req, res, next)=>{
 
 console.log(req.body.regNo);
     Ngo.findOne( {'regNo':req.body.regNo} , function(err , exits){
-        console.log(exits);
         if(err){
-            res.json(error);
+            res.json(err);
         }
         else if( exits !==null ){
-            res.json("exits");
+            res.json({message : "Registration already exits"});
         }
         else{
-            console.log("there");
+
             Ngo.createNgo(newNgo,(err,ngo)=>{
                 if(err)
                     throw err;

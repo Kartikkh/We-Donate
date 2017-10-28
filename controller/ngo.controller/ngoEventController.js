@@ -24,11 +24,11 @@ module.exports.postEvent = (req,res) => {
                     res.status(response.status)
                         .json(response.message);
                 }else{
-                    // send to all NGO subscribers via socket.io
+                  // send to all NGO subscribers via socket.io
                     async.each(ngo.followers ,(id , callback)=>{
                         // send data here with socket
-
-
+                        console.log(id);
+                        io.emit('chat message', req.body);
                     })
                 }
 

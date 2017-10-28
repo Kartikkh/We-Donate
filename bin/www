@@ -21,3 +21,4 @@ server.listen(port, (err) => {
 
     console.log(`Server listening on ${app.get('port')}`);
 });
+var io = require('socket.io').listen(server);
