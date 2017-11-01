@@ -165,7 +165,7 @@ router.post('/login', function(req, res) {
         console.log('Verification Status '+user.local.isVerified);
         if(user.local.isVerified){
             var passwordIsValid = bcrypt.compareSync(req.body.password, user.local.password);
-            if (!passwordIsValid) return res.status(401).send({ auth: false, token: null, Message:'Your password is invalid!' });
+            if (!passwordIsValid) return res.json({  token: null, message:'Your password is invalid!' });
             jwt.sign({
                 username: req.body.username,
                 email: user.local.email
@@ -178,14 +178,13 @@ router.post('/login', function(req, res) {
                 else{
                     res.json({
                         'token' : token ,
-                        'success' : true,
-                        'Message': 'You are logged in Now'
+                        user : user
                     })
                 }
             });
         }
         else{
-            return res.status(401).send({'Message': 'First Verify Your Account'});
+            return res.json({message: 'First Verify Your Account'});
         }
     });
 
