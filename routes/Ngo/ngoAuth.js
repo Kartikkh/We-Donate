@@ -40,7 +40,7 @@ router.post('/login',(req,res,next)=>{
             res.json("does not exits")
         }else{
             var passwordIsValid = bcrypt.compareSync(req.body.password, result.password);
-            if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
+            if (!passwordIsValid) return res.json("Wrong Password");
             jwt.sign({
                 username: req.body.regNo,
             },   process.env.secretKey, {
@@ -51,8 +51,8 @@ router.post('/login',(req,res,next)=>{
                 }
                 else{
                     res.json({
-                        'token' : token ,
-                        'success' : true
+                        token : token ,
+                        ngo   : result
                     })
                 }
             });
