@@ -8,7 +8,8 @@ router
     .get(ngoProfile.getProfile)
     .patch(ngoProfile.updateProfile)
     .delete(ngoProfile.deleteProfile);
-//
+
+
 // router
 //     .route('/follow/:ngoId')
 //     .get(ngoProfile.follower)

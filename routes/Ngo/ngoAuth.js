@@ -153,9 +153,15 @@ router.get('/verify/:verificationToken', (req, res, next)=>{
 });
 
 router.post('/resend_email', (req, res, next)=>{
+
     Ngo.findOne({'email': req.body.email}, (err, ngo)=>{
         if(err){
-            return res.status(status.dbError.response_code).send(status.dbError.reason)
+            return res.json({message: "Please Try again Later !"});
+        }
+        if(ngo===null || ngo===undefined){
+            return res.json({message: " You need to Register first !",
+            status : false
+            })
         }
         var host = req.get('host');
         var link = `https://${host}/ngoAuth/verify/${ngo.authenticationSecret}`;
@@ -170,7 +176,7 @@ router.post('/resend_email', (req, res, next)=>{
             if(err){
                 return res.json({
                     status: false,
-                    message: "Please Try again later."
+                    message: "You have Signed-Up successfully, but Verification Email could not be Sent. Try again later."
                 })
             }
             return res.json({

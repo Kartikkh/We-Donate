@@ -253,6 +253,11 @@ router.post('/resend_email', (req, res, next)=>{
         if(err){
             return res.status(status.dbError.response_code).send(status.dbError.reason)
         }
+        if(user===null || user===undefined){
+            return res.json({message: " You need to Register first !",
+                status : false
+            })
+        }
         var host = req.get('host');
         var link = `https://${host}/userAuth/verify/${user.local.verificationToken}`;
         console.log(link);
