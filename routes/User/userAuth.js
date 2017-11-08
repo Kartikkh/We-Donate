@@ -251,7 +251,7 @@ router.get('/verify/:verificationToken', (req, res, next)=>{
 router.post('/resend_email', (req, res, next)=>{
     User.findOne({'local.email': req.body.email}, (err, user)=>{
         if(err){
-            return res.status(status.dbError.response_code).send(status.dbError.reason)
+            return res.json({message: "Please Try again Later !"});
         }
         if(user===null || user===undefined){
             return res.json({message: " You need to Register first !",
@@ -269,8 +269,6 @@ router.post('/resend_email', (req, res, next)=>{
         }
         transporter.sendMail(messageOptions, (err)=>{
             if(err){
-                console.log('Verification Email could not be sent')
-                console.log(err)
                 return res.json({
                     status: false,
                     message: "You have Signed-Up successfully, but Verification Email could not be Sent. Try again later."

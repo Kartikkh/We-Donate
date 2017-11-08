@@ -7,19 +7,21 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const expressValidator = require('express-validator');
 const config = require('config');
-
 const app = express();
 const JWTvalidation =  require('./middleware/JsonToken');
 const userAuth = require('./routes/User/userAuth.js');
 const ngoAuth = require('./routes/Ngo/ngoAuth');
 const ngoEvent =  require('./routes/Ngo/ngoEvents');
 const ngoProfile = require('./routes/Ngo/ngoProfile');
-app.set('view engine', 'jade');
 
+
+
+app.set('view engine', 'jade');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -56,7 +58,6 @@ mongoose.connect(config.DBHost, MongoOptions, (err, db) => {
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-
 
 
 if(config.util.getEnv('NODE_ENV') !== 'production'){

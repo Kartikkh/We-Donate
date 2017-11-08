@@ -1,5 +1,5 @@
 # WE Donate
-> We are trying a create a social network platform so that people willing to donate anything can get all information about events being organized by NGOs in there region/localities. They can follow, like, comment on events and share events being organized by NGOs through other social media platforms like facebook, whatsapp, twitter, etc. The users who have already subscribed to NGOs will get live feeds about the event posted by NGO's.
+> We are trying to a create a social network platform so that people willing to donate anything can get all information about events being organized by NGOs in their region/localities. They can follow, like, comment on events and share events being organized by NGOs through other social media platforms like facebook, whatsapp, twitter, etc. The users who have already subscribed to NGOs will get live feeds about the event posted by NGO's.
 This is the Backend of our Application where we are constantly working on creating Api for our Ionic Application [We-Donate](https://github.com/Kartikkh/WeDonateMobileApp)
 
 ## Requirements

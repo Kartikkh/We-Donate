@@ -8,6 +8,7 @@ var jwt = require('jsonwebtoken');
 module.exports.postEvent = (req,res) => {
    Events.saveEvent(req.body , (err,saveEvent)=>{
 
+
       var response = {
           status : 500,
           message : err
@@ -25,11 +26,11 @@ module.exports.postEvent = (req,res) => {
                         .json(response.message);
                 }else{
                   // send to all NGO subscribers via socket.io
-                    async.each(ngo.followers ,(id , callback)=>{
-                        // send data here with socket
-                        console.log(id);
-                        io.emit('chat message', req.body);
-                    })
+                  //   async.each(ngo.followers ,(id , callback)=>{
+                  //       // send data here with socket
+                  //       console.log(id);
+                  //       io.emit('chat message', req.body);
+                  //   })
                 }
 
           })

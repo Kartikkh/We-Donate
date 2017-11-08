@@ -11,7 +11,6 @@ const HTTPSOptions = {
     key: fs.readFileSync('certificate/server.key'),
     cert: fs.readFileSync('certificate/server.crt')
 };
-
 const server = https.createServer(HTTPSOptions, app);
 
 server.listen(port, (err) => {
@@ -21,4 +20,5 @@ server.listen(port, (err) => {
 
     console.log(`Server listening on ${app.get('port')}`);
 });
-var io = require('socket.io').listen(server);
+const io = require('socket.io').listen(server);
+app.io = io;
