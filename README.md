@@ -26,8 +26,15 @@ Then install the dependencies and run the development environment
 
 ```sh
 $ npm i 
-$ npm run dev
+$ npm start
 ```
+
+For error checks (run Nodemon server)
+
+```sh
+$ npm run dev 
+```
+
 
 You can use postman to check the API endpoints.
 
