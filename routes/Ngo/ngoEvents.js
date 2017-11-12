@@ -6,7 +6,7 @@ const ngoEvents = require('../../controller/ngo.controller/ngoEventController');
 
 //posting Events
 router
-    .route('/')
+    .route('/post')
     .post(ngoEvents.postEvent);
 
 

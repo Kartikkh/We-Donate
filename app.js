@@ -52,7 +52,6 @@ mongoose.connect(config.DBHost, MongoOptions, (err, db) => {
     if (err) {
         return console.log('Connection to MongoStore could not be made', err);
     }
-
     console.log('Connection to Mongo Store Successful');
 });
 
@@ -60,12 +59,12 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 
-if(config.util.getEnv('NODE_ENV') !== 'production'){
+if(config.util.getEnv('NODE_ENV') !== 'production' ){
     require('dotenv').load();
+    console.log(process.env.port);
 }
 
 if (config.util.getEnv('NODE_ENV') !== 'test') {
-    // use morgan to log at command line
     app.use(morgan('combined')); // 'combined' outputs the Apache style LOGs
 }
 
@@ -73,13 +72,15 @@ app.use(expressValidator());
 app.use('/userAuth', userAuth);
 app.use('/ngoAuth', ngoAuth);
 
-app.use(JWTvalidation);
+//app.use(JWTvalidation);
 
 app.use('/ngoEvent', ngoEvent);
 app.use('/ngoProfile',ngoProfile);
 
 const port = process.env.PORT || 3000;
 app.set('port', port);
+
+
 
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
@@ -107,5 +108,7 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.send({ 'error': 'Not Found' });
 });
+
+
 
 module.exports = app;

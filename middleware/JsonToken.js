@@ -1,12 +1,16 @@
 var jwt = require('jsonwebtoken');
 
 module.exports = function(req,res,next) {
+    console.log(req.headers);
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
-   var bearerHeader = req.headers["authorization"];
-   if(!token && typeof bearerHeader !== 'undefined'){
+    var bearerHeader = req.headers["authorization"];
+    console.log(bearerHeader);
+
+    if(!token && typeof bearerHeader !== 'undefined'){
        var bearer = bearerHeader.split(" ");
        token = bearer[1];
     }
+    //console.log(token);
     if (token) {
         // verifies secret and checks exp
         jwt.verify(token,  process.env.secretKey, function(err, decoded) {
@@ -17,7 +21,7 @@ module.exports = function(req,res,next) {
                 });
             }
             req.userId = decoded.username;
-         //   console.log(req.userId);
+            console.log(req.userId);
             next(); //no error, proceed
         });
     } else {

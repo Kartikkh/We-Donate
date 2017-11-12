@@ -6,37 +6,41 @@ var jwt = require('jsonwebtoken');
 
 
 module.exports.postEvent = (req,res) => {
-   Events.saveEvent(req.body , (err,saveEvent)=>{
+ //  Events.saveEvent(req.body , (err,saveEvent)=>{
 
+        //console.log(req.body);
+        //console.log(req.headers);
+        res.json("hello");
+        //res.json(req.body);
 
-      var response = {
-          status : 500,
-          message : err
-      };
-      var id = req.userId;
-
-      if(err){
-          res.status(response.status)
-              .json(response.message);
-      }else {
-          // find the data of Ngo from token and
-            Ngo.getNGOByNGOname(id ,(err,ngo)=>{
-                if(err){
-                    res.status(response.status)
-                        .json(response.message);
-                }else{
-                  // send to all NGO subscribers via socket.io
-                  //   async.each(ngo.followers ,(id , callback)=>{
-                  //       // send data here with socket
-                  //       console.log(id);
-                  //       io.emit('chat message', req.body);
-                  //   })
-                }
-
-          })
-
-      }
-  })
+      // var response = {
+      //     status : 500,
+      //     message : err
+      // };
+      // var id = req.userId;
+      //
+      // if(err){
+      //     res.status(response.status)
+      //         .json(response.message);
+      // }else {
+      //     // find the data of Ngo from token and
+      //       Ngo.getNGOByNGOname(id ,(err,ngo)=>{
+      //           if(err){
+      //               res.status(response.status)
+      //                   .json(response.message);
+      //           }else{
+      //             // send to all NGO subscribers via socket.io
+      //             //   async.each(ngo.followers ,(id , callback)=>{
+      //             //       // send data here with socket
+      //             //       console.log(id);
+      //             //       io.emit('chat message', req.body);
+      //             //   })
+      //           }
+      //
+      //     })
+      //
+      // }
+ // })
 
 };
 
