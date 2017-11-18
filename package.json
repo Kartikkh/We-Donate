@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev":   "nodemon app.js",
+    "dev": "nodemon app.js",
     "test": "mocha --timeout 10000 || true"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
     "body-parser": "~1.17.1",
     "config": "^1.26.2",
     "cookie-parser": "~1.4.3",
+    "cors": "^2.8.4",
     "crypto-random-string": "^1.0.0",
     "debug": "~2.6.3",
     "dotenv": "^4.0.0",

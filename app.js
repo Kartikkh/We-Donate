@@ -13,7 +13,7 @@ const userAuth = require('./routes/User/userAuth.js');
 const ngoAuth = require('./routes/Ngo/ngoAuth');
 const ngoEvent =  require('./routes/Ngo/ngoEvents');
 const ngoProfile = require('./routes/Ngo/ngoProfile');
-
+const cors = require('cors');
 
 
 app.set('view engine', 'jade');
@@ -22,13 +22,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
-    next();
-});
+app.use(cors({ origin: '*', optionsSuccessStatus: 200 }));
+//
+// app.use((req, res, next) => {
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+//     next();
+// });
 
 app.use(helmet());
 
@@ -72,7 +73,7 @@ app.use(expressValidator());
 app.use('/userAuth', userAuth);
 app.use('/ngoAuth', ngoAuth);
 
-//app.use(JWTvalidation);
+app.use(JWTvalidation);
 
 app.use('/ngoEvent', ngoEvent);
 app.use('/ngoProfile',ngoProfile);
