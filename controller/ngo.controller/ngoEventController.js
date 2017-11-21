@@ -1,80 +1,122 @@
 'use strict';
 const Events = require('../../models/Ngo/eventSchema');
 const Ngo = require('../../models/Ngo/ngo');
-
+const commentSchema = require('../../models/Ngo/comments');
 
 
 module.exports.postEvent = (req,res) => {
 
-    console.log(req.body);
+
+
+    var id = req.userId;
 
     var event  = new Events({
-        post : req.body.description,
-        contactNo :req.body.contactNo,
-        date : req.body.date,
+        post :      req.body.description,
+        contactNo : req.body.contactNo,
+        date :      req.body.date,
         startTime : req.body.startTime,
-        endTime : req.body.endTime
+        endTime :   req.body.endTime,
+        regNo  :    id,
+        ngoName :   req.ngoName
     });
 
     Events.saveEvent(event , (err,saveEvent)=>{
 
-
-        var response = {
+        let response = {
             status : 500,
             message : err
         };
-        var id = req.userId;
-        console.log(id);
 
         if(err){
+            response.message=err;
             res.status(response.status)
                 .json(response.message);
-        }else {
+        }else{
               Ngo.getNGOByNGOname(id ,(err,ngo)=>{
                   if(err){
-                      res.status(response.status)
+                           res.status(response.status)
                           .json(response.message);
                   }else{
-                        ngo.events.push(saveEvent._id);
-                        ngo.save((err)=>{
+                         ngo.events.push(saveEvent._id);
+                         ngo.save((err)=>{
                             if(err){
-                                res.status(response.status)
-                                    .json(response.message);
+                                 res.status(response.status)
+                                     .json(response.message);
                             }else{
-                                response.status = 200;
+                                 response.status = 200;
                                  response.message = "Successfully Created";
-                                res.status(response.status)
+                                 res.status(response.status)
                                     .json(response.message);
                             }
                         });
-                  }
-
+                     }
             })
-
         }
     })
-
-
 };
 
 module.exports.getAllEventForNgo = (req,res) =>{
 
-    Events.findAll((err , event)=>{
-        var response = {
+   Events.find({'regNo' : req.userId}).exec((err,events)=>{
+       let response = {
+           status : 500,
+           message : err
+       };
+       if(err){
+           res.status(response.status)
+               .json(response.message);
+       }else if(events === null || events === undefined){
+           response.status = 200;
+           response.message = "Invalid UserId !";
+           res.status(response.status)
+               .json(response.message);
+       }else{
+           res.status(response.status)
+               .json(events);
+       }
+   })
+
+
+};
+
+
+
+modules.exports.getEventById = (req,res) =>{
+
+    Events
+        .findOne({'_id' : req.params.id})
+        .populate([
+            {
+                path: 'comments',
+                model: 'commentSchema'
+             },
+
+            //Image upload URL's
+
+            // {
+            //     path: 'LikedUser',
+            //     model: 'User',
+            //
+            // }
+
+
+        ]).exec((err,event)=>{
+        let response = {
             status : 500,
             message : err
         };
-
         if(err){
             res.status(response.status)
                 .json(response.message);
-        }else{
-            response.status= 200;
-            response.message = event;
+        }else if(event === null || event === undefined){
+            response.status = 200;
+            response.message = "Invalid UserId !";
             res.status(response.status)
                 .json(response.message);
+        }else{
+            res.status(response.status)
+                .json(event);
         }
-
     })
 };
 

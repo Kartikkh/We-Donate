@@ -21,6 +21,7 @@ module.exports = function(req,res,next) {
                 });
             }
             req.userId = decoded.username;
+            req.ngoName = decoded.ngoName;
             console.log(req.userId);
             next(); //no error, proceed
         });

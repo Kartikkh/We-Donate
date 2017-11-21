@@ -7,13 +7,14 @@ const ngoEvents = require('../../controller/ngo.controller/ngoEventController');
 //posting Events
 router
     .route('/post')
-    .post(ngoEvents.postEvent);
+    .post(ngoEvents.postEvent)
+    .get(ngoEvents.getAllEventForNgo)
 
 
 // Getting Detail page , Update and delete Event Route
 router
     .route('/:postId')
-    .get(ngoEvents.getAllEventForNgo)
+    .get(ngoEvents.getEventById)
     .patch(ngoEvents.updateEvent)
     .delete(ngoEvents.deleteEvent);
 

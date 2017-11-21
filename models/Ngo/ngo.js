@@ -15,7 +15,9 @@ var NgoSchema = new Schema({
         required: true,
         type: String,
     },
-    authorisedPerson: String,
+    authorisedPerson: {
+        type : String
+    },
     description : {
         type: String
     },

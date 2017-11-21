@@ -5,10 +5,25 @@ var Schema = mongoose.Schema;
 
 var eventSchema = new Schema({
 
-    authorisedPerson: String,
+    authorisedPerson:{
+       type : String
+    } ,
+
+    ngoName : {
+        required: true,
+        type: String,
+        unique: true
+    },
+
+    regNo: {
+        required: true,
+        type: String,
+    },
+
     post : {
         type: String
     },
+
     Category:{
       type:String
     },
@@ -71,9 +86,6 @@ module.exports.findEventAndRemove = (id , callback)=>{
     event.findOne(id , callback);
 };
 
-module.exports.findAll = (callback)=>{
-    event.find({} , callback);
-}
 
 
 

@@ -43,6 +43,7 @@ router.post('/login',(req,res,next)=>{
             if (!passwordIsValid) return res.json("Wrong Password");
             jwt.sign({
                 username: req.body.regNo,
+                ngoName: req.body.ngoName
             },   process.env.secretKey, {
                 expiresIn: 60*2
             },(err, token)=>{
