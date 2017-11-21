@@ -109,7 +109,7 @@ module.exports.createNgo = (newNgo, callback)=>{
 };
 
 module.exports.getNGOByNGOname = (regNo, callback)=>{
-    Ngo.findOne(regNo, callback)
+    Ngo.findOne({'regNo':regNo}, callback)
 };
 
 //module.exports.getNgoById = (id, callback)=>{

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
 
+var commentSchema = require('./comments');
 var Schema = mongoose.Schema;
 
 var eventSchema = new Schema({
@@ -29,7 +29,10 @@ var eventSchema = new Schema({
 
     contactNo : String,
     time : String ,
-
+    comments:[{
+        type: Schema.Types.ObjectId,
+        ref: 'commentSchema'
+    }],
 
     created_at: {
         type: Date,
@@ -67,6 +70,10 @@ module.exports.findEvent = (id , callback)=>{
 module.exports.findEventAndRemove = (id , callback)=>{
     event.findOne(id , callback);
 };
+
+module.exports.findAll = (callback)=>{
+    event.find({} , callback);
+}
 
 
 

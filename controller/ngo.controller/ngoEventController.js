@@ -1,52 +1,65 @@
 'use strict';
 const Events = require('../../models/Ngo/eventSchema');
 const Ngo = require('../../models/Ngo/ngo');
-const async = require('async');
-var jwt = require('jsonwebtoken');
+
 
 
 module.exports.postEvent = (req,res) => {
- //  Events.saveEvent(req.body , (err,saveEvent)=>{
 
-        //console.log(req.body);
-        //console.log(req.headers);
-        res.json("hello");
-        //res.json(req.body);
+    console.log(req.body);
 
-      // var response = {
-      //     status : 500,
-      //     message : err
-      // };
-      // var id = req.userId;
-      //
-      // if(err){
-      //     res.status(response.status)
-      //         .json(response.message);
-      // }else {
-      //     // find the data of Ngo from token and
-      //       Ngo.getNGOByNGOname(id ,(err,ngo)=>{
-      //           if(err){
-      //               res.status(response.status)
-      //                   .json(response.message);
-      //           }else{
-      //             // send to all NGO subscribers via socket.io
-      //             //   async.each(ngo.followers ,(id , callback)=>{
-      //             //       // send data here with socket
-      //             //       console.log(id);
-      //             //       io.emit('chat message', req.body);
-      //             //   })
-      //           }
-      //
-      //     })
-      //
-      // }
- // })
+    var event  = new Events({
+        post : req.body.description,
+        contactNo :req.body.contactNo,
+        date : req.body.date,
+        startTime : req.body.startTime,
+        endTime : req.body.endTime
+    });
+
+    Events.saveEvent(event , (err,saveEvent)=>{
+
+
+        var response = {
+            status : 500,
+            message : err
+        };
+        var id = req.userId;
+        console.log(id);
+
+        if(err){
+            res.status(response.status)
+                .json(response.message);
+        }else {
+              Ngo.getNGOByNGOname(id ,(err,ngo)=>{
+                  if(err){
+                      res.status(response.status)
+                          .json(response.message);
+                  }else{
+                        ngo.events.push(saveEvent._id);
+                        ngo.save((err)=>{
+                            if(err){
+                                res.status(response.status)
+                                    .json(response.message);
+                            }else{
+                                response.status = 200;
+                                 response.message = "Successfully Created";
+                                res.status(response.status)
+                                    .json(response.message);
+                            }
+                        });
+                  }
+
+            })
+
+        }
+    })
+
 
 };
 
-module.exports.getEvent = (req,res) =>{
+module.exports.getAllEventForNgo = (req,res) =>{
 
-    Events.findEvent( req.params.postId,(err , event)=>{
+    Events.findAll((err , event)=>{
         var response = {
             status : 500,
             message : err

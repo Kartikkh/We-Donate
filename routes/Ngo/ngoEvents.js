@@ -13,7 +13,7 @@ router
 // Getting Detail page , Update and delete Event Route
 router
     .route('/:postId')
-    .get(ngoEvents.getEvent)
+    .get(ngoEvents.getAllEventForNgo)
     .patch(ngoEvents.updateEvent)
     .delete(ngoEvents.deleteEvent);
 

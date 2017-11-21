@@ -20,5 +20,5 @@ server.listen(port, (err) => {
 
     console.log(`Server listening on ${app.get('port')}`);
 });
-const io = require('socket.io').listen(server);
-app.io = io;
+// const io = require('socket.io').listen(server);
+// app.io = io;
