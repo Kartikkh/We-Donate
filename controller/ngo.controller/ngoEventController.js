@@ -17,7 +17,8 @@ module.exports.postEvent = (req,res) => {
         startTime : req.body.startTime,
         endTime :   req.body.endTime,
         regNo  :    id,
-        ngoName :   req.ngoName
+        ngoName :   req.ngoName,
+
     });
 
     Events.saveEvent(event , (err,saveEvent)=>{
@@ -81,7 +82,7 @@ module.exports.getAllEventForNgo = (req,res) =>{
 
 
 
-modules.exports.getEventById = (req,res) =>{
+modules.exports.getEventDetails = (req,res) =>{
 
     Events
         .findOne({'_id' : req.params.id})
@@ -149,3 +150,42 @@ module.exports.deleteEvent = (req,res) =>{
 
 
 };
+
+
+
+
+
+
+/// get Nearest Location
+
+module.exports.nearestLocation = (req,res)=>{
+
+    let coordinates = [req.params.longitude, req.params.latitude];
+    let limit = req.query.limit || 10;
+    let maxDistance = req.query.distance || 8;
+    maxDistance /= 6371;
+
+    var response = {
+        status : 500,
+        message : err
+    };
+
+    Events.find({
+        locationCoordinate: {
+            $near:coordinates ,
+            $maxDistance: maxDistance
+        }
+    }).limit(limit).exec(function(err, locations) {
+        if (err) {
+            return  res.status(response.status)
+                .json(response.message);
+        }
+        res.status(200)
+            .json(locations);
+    });
+
+
+
+};
+
+

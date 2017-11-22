@@ -27,8 +27,12 @@ var eventSchema = new Schema({
     Category:{
       type:String
     },
-    location: {
+    locationName: {
        type: String //Geolocation
+    },
+    locationCoordinate : {
+        coordinates : [Number],
+        index: '2d'
     },
     startDate:{
         type:Date
