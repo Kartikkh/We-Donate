@@ -195,3 +195,44 @@ module.exports.nearestLocation = (req,res,next)=>{
 };
 
 
+
+// Recent Universal events
+
+
+module.exports.recentEvents = (req,res,next)=>{
+
+    let response = {
+        status : 500,
+        message : "error"
+    };
+    let skip = req.query.page;
+    Events.find().sort({created_at :  -1}).skip(skip).limit(10)
+        .exec((err , event)=>{
+                if(err){
+                    res.status(response.status)
+                        .json(err);
+                }else if(event=== null || event === undefined){
+                    response.message= "No Recent Events found"
+                    res.status(200)
+                        .json(response.message);
+                }else{
+                    res.status(200)
+                        .json(event);
+                }
+        })
+
+
+
+};
+
+
+
+
+module.exports.followerEvents = (req,res,next)=>{
+
+   
+
+
+
+};
+

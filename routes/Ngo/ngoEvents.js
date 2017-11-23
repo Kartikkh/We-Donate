@@ -23,6 +23,15 @@ router
     .route('/nearestLocation/:longitude/:latitude')
     .get(ngoEvents.nearestLocation);
 
+router
+    .route('/recentEvents')
+    .get(ngoEvents.recentEvents);
+
+router
+    .route('/followerEvents')
+    .get(ngoEvents.followerEvents);
+
+
 
 
 
