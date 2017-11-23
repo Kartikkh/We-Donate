@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
-
+const Ngo = require('../Ngo/ngo');
 var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
@@ -38,7 +38,13 @@ var userSchema = new Schema({
         email: String,
         name: String,
         photo: String //Added New
-      }
+      },
+    followers:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Ngo'
+    }]
+
+
     });
 
 var User = mongoose.model('User',userSchema);

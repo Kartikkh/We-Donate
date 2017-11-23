@@ -15,7 +15,7 @@ const ngoEvent =  require('./routes/Ngo/ngoEvents');
 const ngoProfile = require('./routes/Ngo/ngoProfile');
 const cors = require('cors');
 
-
+const userInfo = require('./routes/User/userRoutes');
 app.set('view engine', 'jade');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -69,7 +69,7 @@ app.use(JWTvalidation);
 
 app.use('/ngoEvent', ngoEvent);
 app.use('/ngoProfile',ngoProfile);
-
+ap.use('/userInfo' ,userInfo );
 const port = process.env.PORT || 3000;
 app.set('port', port);
 

@@ -212,7 +212,7 @@ module.exports.recentEvents = (req,res,next)=>{
                     res.status(response.status)
                         .json(err);
                 }else if(event=== null || event === undefined){
-                    response.message= "No Recent Events found"
+                    response.message= "No Recent Events found";
                     res.status(200)
                         .json(response.message);
                 }else{
@@ -230,7 +230,7 @@ module.exports.recentEvents = (req,res,next)=>{
 
 module.exports.followerEvents = (req,res,next)=>{
 
-   
+
 
 
 
