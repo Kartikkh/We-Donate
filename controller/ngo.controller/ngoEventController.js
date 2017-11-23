@@ -4,13 +4,11 @@ const Ngo = require('../../models/Ngo/ngo');
 const commentSchema = require('../../models/Ngo/comments');
 
 
-module.exports.postEvent = (req,res) => {
+module.exports.postEvent = (req,res,next) => {
 
+    let id = req.userId;
 
-
-    var id = req.userId;
-
-    var event  = new Events({
+    let event  = new Events({
         post :      req.body.description,
         contactNo : req.body.contactNo,
         date :      req.body.date,
@@ -18,9 +16,15 @@ module.exports.postEvent = (req,res) => {
         endTime :   req.body.endTime,
         regNo  :    id,
         ngoName :   req.ngoName,
+        authorisedPerson : req.body.authorisedPerson,
+        locationName : req.body.locationName,
+        locationCoordinate: {
+            type: "Point",
+            coordinates: [req.body.longitude, req.body.latitude]
+        }
 
     });
-
+    console.log(event);
     Events.saveEvent(event , (err,saveEvent)=>{
 
         let response = {
@@ -36,7 +40,7 @@ module.exports.postEvent = (req,res) => {
               Ngo.getNGOByNGOname(id ,(err,ngo)=>{
                   if(err){
                            res.status(response.status)
-                          .json(response.message);
+                          .json(err);
                   }else{
                          ngo.events.push(saveEvent._id);
                          ngo.save((err)=>{
@@ -50,7 +54,7 @@ module.exports.postEvent = (req,res) => {
                                     .json(response.message);
                             }
                         });
-                     }
+                  }
             })
         }
     })
@@ -59,11 +63,14 @@ module.exports.postEvent = (req,res) => {
 module.exports.getAllEventForNgo = (req,res) =>{
 
    Events.find({'regNo' : req.userId}).exec((err,events)=>{
+
        let response = {
            status : 500,
            message : err
        };
+
        if(err){
+           response.message= err ;
            res.status(response.status)
                .json(response.message);
        }else if(events === null || events === undefined){
@@ -77,12 +84,11 @@ module.exports.getAllEventForNgo = (req,res) =>{
        }
    })
 
-
 };
 
 
 
-modules.exports.getEventDetails = (req,res) =>{
+module.exports.getEventDetails = (req,res,next) =>{
 
     Events
         .findOne({'_id' : req.params.id})
@@ -93,19 +99,19 @@ modules.exports.getEventDetails = (req,res) =>{
              },
 
             //Image upload URL's
-
             // {
             //     path: 'LikedUser',
             //     model: 'User',
             //
             // }
 
-
         ]).exec((err,event)=>{
+
         let response = {
             status : 500,
             message : err
         };
+
         if(err){
             res.status(response.status)
                 .json(response.message);
@@ -123,12 +129,12 @@ modules.exports.getEventDetails = (req,res) =>{
 
 
 
-module.exports.updateEvent = (req,res) =>{
+module.exports.updateEvent = (req,res,next) =>{
 
 };
 
 
-module.exports.deleteEvent = (req,res) =>{
+module.exports.deleteEvent = (req,res,next) =>{
 
     Events.findEventAndRemove( req.params.postId,(err , event)=>{
         var response = {
@@ -148,43 +154,43 @@ module.exports.deleteEvent = (req,res) =>{
 
     })
 
-
 };
-
-
 
 
 
 
 /// get Nearest Location
 
-module.exports.nearestLocation = (req,res)=>{
+module.exports.nearestLocation = (req,res,next)=>{
 
-    let coordinates = [req.params.longitude, req.params.latitude];
-    let limit = req.query.limit || 10;
-    let maxDistance = req.query.distance || 8;
-    maxDistance /= 6371;
+    let coordinates = [ req.params.longitude,req.params.latitude];
 
-    var response = {
+    let response = {
         status : 500,
-        message : err
+        message : "error"
     };
 
     Events.find({
-        locationCoordinate: {
-            $near:coordinates ,
-            $maxDistance: maxDistance
-        }
-    }).limit(limit).exec(function(err, locations) {
+        locationCoordinate:
+            { $near:
+                {
+                    $geometry: { type: "Point",  coordinates: coordinates },
+                    $maxDistance: 500000
+                }
+            }
+    },(err , locations)=>{
         if (err) {
             return  res.status(response.status)
-                .json(response.message);
+                .json(err);
         }
-        res.status(200)
-            .json(locations);
+        if(locations === null || locations === undefined){
+            res.status(200).json("Sorry There is No Current Events near you !")
+        }else{
+
+            res.status(200)
+                .json(locations);
+        }
     });
-
-
 
 };
 

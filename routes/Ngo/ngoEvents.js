@@ -6,7 +6,7 @@ const ngoEvents = require('../../controller/ngo.controller/ngoEventController');
 
 //posting Events
 router
-    .route('/')
+    .route('/post')
     .post(ngoEvents.postEvent)
     .get(ngoEvents.getAllEventForNgo);
 
@@ -20,7 +20,10 @@ router
 
 
 router
-    .route()
+    .route('/nearestLocation/:longitude/:latitude')
     .get(ngoEvents.nearestLocation);
+
+
+
 
 module.exports = router;

@@ -7,16 +7,14 @@ var eventSchema = new Schema({
 
     authorisedPerson:{
        type : String
-    } ,
+    },
 
     ngoName : {
-        required: true,
         type: String,
         unique: true
     },
 
     regNo: {
-        required: true,
         type: String,
     },
 
@@ -27,16 +25,20 @@ var eventSchema = new Schema({
     Category:{
       type:String
     },
+
     locationName: {
        type: String //Geolocation
     },
+
     locationCoordinate : {
-        coordinates : [Number],
-        index: '2d'
+        type: { type: String },
+        coordinates: []
     },
+
     startDate:{
         type:Date
     },
+
     endDate:{
         type:Date
     },
@@ -47,7 +49,7 @@ var eventSchema = new Schema({
     }],
 
     contactNo : String,
-    time : String ,
+
     comments:[{
         type: Schema.Types.ObjectId,
         ref: 'commentSchema'
@@ -73,6 +75,8 @@ var eventSchema = new Schema({
 
 });
 
+
+ eventSchema.index({ locationCoordinate : "2dsphere" });
 
 const event = mongoose.model('eventSchema',eventSchema );
 module.exports = event;

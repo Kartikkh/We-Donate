@@ -10,7 +10,8 @@ module.exports = function(req,res,next) {
        var bearer = bearerHeader.split(" ");
        token = bearer[1];
     }
-   // console.log(token);
+    console.log("Token is ---->")
+    console.log(token);
     if (token) {
         // verifies secret and checks exp
         jwt.verify(token,  process.env.secretKey, function(err, decoded) {

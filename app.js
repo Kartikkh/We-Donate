@@ -23,12 +23,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: '*', optionsSuccessStatus: 200 }));
 
-// app.use((req, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
-//     next();
-// });
 
 app.use(helmet());
 
@@ -61,7 +55,6 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 if(config.util.getEnv('NODE_ENV') !== 'production' ){
     require('dotenv').load();
-    console.log(process.env.port);
 }
 
 if (config.util.getEnv('NODE_ENV') !== 'test') {
