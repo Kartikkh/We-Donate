@@ -34,7 +34,7 @@ Create a .env file in root directory and add
 secretKey = 'YOURKEY'
 Access_key_ID = 'AMAZON S3 BUCKET ACCESS KEY'
 Secret_access_key = ''AMAZON S3 BUCKET SECRET KEY'
-bucketName = 'wedonate
+bucketName = 'wedonate'
 ```
 
 #### Now run the server 
