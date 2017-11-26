@@ -35,7 +35,7 @@ module.exports.followerList = (req,res,next)=>{
 
 
 
-// Following and UnFollowing API 
+// Following and UnFollowing API
 
 module.exports.followNgo = (req,res,next)=>{
 

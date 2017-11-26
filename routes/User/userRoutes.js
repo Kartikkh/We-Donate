@@ -11,3 +11,5 @@ router
     .route('/follow')
     .get(userController.followNgo);
 
+
+module.exports = router;
