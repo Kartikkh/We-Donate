@@ -22,10 +22,24 @@ $ cd We-Donate
 
 ### Installation
 
-Then install the dependencies and run the development environment
+Install all the dependencies
 
 ```sh
-$ npm i 
+$ npm install
+```
+
+#### Adding Authentication Keys
+Create a .env file in root directory and add 
+```sh
+secretKey = 'YOURKEY'
+Access_key_ID = 'AMAZON S3 BUCKET ACCESS KEY'
+Secret_access_key = ''AMAZON S3 BUCKET SECRET KEY'
+bucketName = 'wedonate'
+```
+
+#### Now run the server 
+
+```sh
 $ npm start
 ```
 
