@@ -60,9 +60,13 @@ module.exports.postEvent = (req,res,next) => {
     })
 };
 
-module.exports.getAllEventForNgo = (req,res) =>{
+module.exports.getAllEventForNgo = (req,res,next) =>{
 
-   Events.find({'regNo' : req.userId}).exec((err,events)=>{
+    console.log("kartik");
+
+    console.log(req.userId);
+
+    Events.find({'regNo' : req.userId}).exec((err,events)=>{
 
        let response = {
            status : 500,
@@ -79,6 +83,7 @@ module.exports.getAllEventForNgo = (req,res) =>{
            res.status(response.status)
                .json(response.message);
        }else{
+           response.status= 200;
            res.status(response.status)
                .json(events);
        }

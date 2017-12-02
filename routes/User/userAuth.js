@@ -167,7 +167,7 @@ router.post('/login', function(req, res) {
             var passwordIsValid = bcrypt.compareSync(req.body.password, user.local.password);
             if (!passwordIsValid) return res.json({  token: null, message:'Your password is invalid!' });
             jwt.sign({
-                username: req.body.user._id,
+                username: user._id,
                 email: user.local.email,
 
             },   process.env.secretKey, {
