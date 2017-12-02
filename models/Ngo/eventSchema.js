@@ -15,7 +15,11 @@ var eventSchema = new Schema({
     },
 
     regNo: {
-        type: String,
+        type: String
+    },
+
+    eventName :{
+        type: String
     },
 
     post : {

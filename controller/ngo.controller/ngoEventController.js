@@ -9,6 +9,7 @@ module.exports.postEvent = (req,res,next) => {
     let id = req.userId;
 
     let event  = new Events({
+        eventName : req.body.eventName,
         post :      req.body.description,
         contactNo : req.body.contactNo,
         date :      req.body.date,
@@ -22,9 +23,10 @@ module.exports.postEvent = (req,res,next) => {
             type: "Point",
             coordinates: [req.body.longitude, req.body.latitude]
         }
-
     });
+
     console.log(event);
+
     Events.saveEvent(event , (err,saveEvent)=>{
 
         let response = {
