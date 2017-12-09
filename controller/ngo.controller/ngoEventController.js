@@ -64,9 +64,7 @@ module.exports.postEvent = (req,res,next) => {
 
 module.exports.getAllEventForNgo = (req,res,next) =>{
 
-    console.log("kartik");
-
-    console.log(req.userId);
+    console.log("kashgdksagd");
 
     Events.find({'regNo' : req.userId}).exec((err,events)=>{
 
@@ -96,9 +94,9 @@ module.exports.getAllEventForNgo = (req,res,next) =>{
 
 
 module.exports.getEventDetails = (req,res,next) =>{
-
+        console.log(req.params.postId);
     Events
-        .findOne({'_id' : req.params.id})
+        .findOne({'_id' : req.params.postId})
         .populate([
             {
                 path: 'comments',
@@ -128,7 +126,7 @@ module.exports.getEventDetails = (req,res,next) =>{
             res.status(response.status)
                 .json(response.message);
         }else{
-            res.status(response.status)
+            res.status(200)
                 .json(event);
         }
     })
