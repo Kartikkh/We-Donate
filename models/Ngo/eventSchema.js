@@ -66,14 +66,17 @@ var eventSchema = new Schema({
 
     going : {
         type:Number,
+        flag:0,
         default:0
     },
     interested:{
         type:Number,
+        flag:0,
         default:0
     },
     like:{
         type:Number,
+        flag:0,
         default:0
     }
 
