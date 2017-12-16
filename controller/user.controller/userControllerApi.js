@@ -61,14 +61,14 @@ module.exports.followerList = (req,res,next)=>{
         .populate({
             path: 'followers',
             model: 'Ngo',
-            select: 'ngoName regNo coverPic followersCount'
+            select: 'ngoName regNo coverPic followersCount,tagLine'
         })
         .exec((err,follower)=>{
             if(err){
                 res.status(response.status)
                     .json(err);
             }else if(follower === null || follower === undefined){
-                response.message= "No Recent Events found";
+                response.message= "You Haven't Subscribe to any Ngo's";
                 res.status(200)
                     .json(response.message);
             }else{

@@ -80,6 +80,7 @@ router.post('/signup',(req, res, next)=>{
     var newNgo = new Ngo({
         ngoName : req.body.ngoName,
         regNo : req.body.regNo,
+        tagLine : req.body.tagLine,
         email : req.body.email,
         password : req.body.password,
         contactNo : req.body.contactNo,
