@@ -9,6 +9,10 @@ var stories = new Schema({
         type : String,
         required:true
     },
+    storyName :{
+        type : String,
+        required:true
+    },
     created_at: {
         type: Date,
         default: Date.now

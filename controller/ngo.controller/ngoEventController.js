@@ -2,7 +2,7 @@
 const Events = require('../../models/Ngo/eventSchema');
 const Ngo = require('../../models/Ngo/ngo');
 const commentSchema = require('../../models/Ngo/comments');
-
+const User = require('../../models/User/user');
 
 module.exports.postEvent = (req,res,next) => {
 
@@ -64,7 +64,7 @@ module.exports.postEvent = (req,res,next) => {
 
 module.exports.getAllEventForNgo = (req,res,next) =>{
 
-    console.log("kashgdksagd");
+
 
     Events.find({'regNo' : req.userId}).exec((err,events)=>{
 
@@ -233,11 +233,162 @@ module.exports.recentEvents = (req,res,next)=>{
 
 
 
-module.exports.followerEvents = (req,res,next)=>{
+module.exports.like = (req,res,next)=>{
+
+    let response = {
+        status : 500,
+        message : "error"
+    };
+
+    let eventId = req.params.eventId;
+
+    User.findById({_id : req.userId},function (err , user) {
+
+        if(err){
+            res.status(response.status)
+                .json(err);
+        }else if(user === null || user === undefined){
+            response.message= "Please login again";
+            res.status(200)
+                .json(response.message);
+        }else{
+            Events.findById({_id : eventId} ,
+                { 'like' : {$in : [user._id] } } ,  { $pull: {'like' : user._id } },
+                {new : true, safe : true},
+                function (err, likeEvent) {
+                    if(err){
+                        res.status(response.status)
+                            .json(err);
+                    }else if(likeEvent === null || likeEvent === undefined){
+                        Events.findById({_id : eventId}  ,function (err,event) {
+                            if(err){
+                                res.status(500)
+                                    .json(err);
+                            }else{
+                                 event.like.push(user._id);
+                                 res.status(200).json("Like");
+                            }
+                        })
+
+                    }else{
+                        response.message = "Unlike ";
+                        res.status(200).json(response.message);
+                    }
+
+                })
+        }
+
+    })
+
+
+};
+
+
+module.exports.going = (req,res,next)=>{
 
 
 
 
+    let response = {
+        status : 500,
+        message : "error"
+    };
+
+    let eventId = req.params.eventId;
+
+    User.findById({_id : req.userId},function (err , user) {
+
+        if(err){
+            res.status(response.status)
+                .json(err);
+        }else if(user === null || user === undefined){
+            response.message= "Please login again";
+            res.status(200)
+                .json(response.message);
+        }else{
+            Events.findById({_id : eventId} ,
+                { 'going' : {$in : [user._id] } } ,  { $pull: {'going' : user._id } },
+                {new : true, safe : true},
+                function (err, goingEvent) {
+                    if(err){
+                        res.status(response.status)
+                            .json(err);
+                    }else if(goingEvent === null || goingEvent === undefined){
+                        Events.findById({_id : eventId}  ,function (err,event) {
+                            if(err){
+                                res.status(500)
+                                    .json(err);
+                            }else{
+                                event.going.push(user._id);
+                                res.status(200).json("Going");
+                            }
+                        })
+
+                    }else{
+                        response.message = "Not Going ";
+                        res.status(200).json(response.message);
+                    }
+
+                })
+        }
+
+    })
+
+
+
+
+
+
+
+};
+
+module.exports.interested = (req,res,next)=>{
+
+
+    let response = {
+        status : 500,
+        message : "error"
+    };
+
+    let eventId = req.params.eventId;
+
+    User.findById({_id : req.userId},function (err , user) {
+
+        if(err){
+            res.status(response.status)
+                .json(err);
+        }else if(user === null || user === undefined){
+            response.message= "Please login again";
+            res.status(200)
+                .json(response.message);
+        }else{
+            Events.findById({_id : eventId} ,
+                { 'interested' : {$in : [user._id] } } ,  { $pull: {'interested' : user._id } },
+                {new : true, safe : true},
+                function (err, interestedEvent) {
+                    if(err){
+                        res.status(response.status)
+                            .json(err);
+                    }else if(interestedEvent === null || interestedEvent === undefined){
+                        Events.findById({_id : eventId}  ,function (err,event) {
+                            if(err){
+                                res.status(500)
+                                    .json(err);
+                            }else{
+                                event.interested.push(user._id);
+                                res.status(200).json("Interested");
+                            }
+                        })
+
+                    }else{
+                        response.message = "Not Interested ";
+                        res.status(200).json(response.message);
+                    }
+
+                })
+        }
+
+    })
 
 };
 

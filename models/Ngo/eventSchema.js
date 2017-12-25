@@ -1,9 +1,9 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const User = require('./../User/user');
+const commentSchema = require('./comments');
+const Schema = mongoose.Schema;
 
-var commentSchema = require('./comments');
-var Schema = mongoose.Schema;
-
-var eventSchema = new Schema({
+const eventSchema = new Schema({
 
     authorisedPerson:{
        type : String
@@ -64,26 +64,26 @@ var eventSchema = new Schema({
         default: Date.now
     },
 
-    going : {
-        type:Number,
-        flag:0,
-        default:0
-    },
-    interested:{
-        type:Number,
-        flag:0,
-        default:0
-    },
-    like:{
-        type:Number,
-        flag:0,
-        default:0
-    }
+    going : [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+
+    interested:[{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+
+    like:[{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+
 
 });
 
 
- eventSchema.index({ locationCoordinate : "2dsphere" });
+eventSchema.index({ locationCoordinate : "2dsphere" });
 
 const event = mongoose.model('eventSchema',eventSchema );
 module.exports = event;

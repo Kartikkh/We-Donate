@@ -10,8 +10,8 @@ router
     .delete(ngoProfile.deleteProfile);
 
 
-// router
-//     .route('/follow/:ngoId')
-//     .get(ngoProfile.follower)
+router
+    .route('/viewNgoProfile')
+    .get(ngoProfile.viewNgoProfile);
 
 module.exports = router;

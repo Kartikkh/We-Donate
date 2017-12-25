@@ -42,10 +42,6 @@ module.exports.followedEvent = (req,res,next)=>{
 
     });
 
-
-
-
-
 };
 
 
@@ -61,7 +57,7 @@ module.exports.followerList = (req,res,next)=>{
         .populate({
             path: 'followers',
             model: 'Ngo',
-            select: 'ngoName regNo coverPic followersCount,tagLine'
+            select: 'ngoName regNo coverPic followersCount tagLine'
         })
         .exec((err,follower)=>{
             if(err){
@@ -81,7 +77,6 @@ module.exports.followerList = (req,res,next)=>{
 
 
 
-
 // Following and UnFollowing API
 
 module.exports.followNgo = (req,res,next)=>{
@@ -92,73 +87,60 @@ module.exports.followNgo = (req,res,next)=>{
         message : "error"
     };
 
+    let ngoId = req.params.ngoId;
 
-    User.find({_id : req.userId,
-            "follower": { $in: [req.params.ngoId]}
-        },
-        {
-            $pull :{
-                'follower':req.params.ngoId
-            }
-        },{
-            new : true,
-            safe : true
-        },  (err ,  follow)=>{
+    User.findById({_id : req.userId},function (err , user) {
+
+        if(err){
+            res.status(response.status)
+                .json(err);
+        }else if(user === null || user === undefined){
+            response.message= "Please login again";
+            res.status(200)
+                .json(response.message);
+        }else{
+            Ngo.findById({_id : ngoId} ,
+                { 'followers' : {$in : [user._id] } } ,  { $pull: {'followers' : user._id } },
+                {new : true, safe : true},
+                function (err, followNgo) {
                 if(err){
                     res.status(response.status)
                         .json(err);
-                }else if(follow===null || follow=== undefined){
-                    User.find({_id:req.userId},
-                        {
-                            $addToSet: {
-                                'follower':req.params.ngoId
+                }else if(followNgo === null || followNgo === undefined){
+                    Ngo.findById({_id : ngoId}  ,function (err,ngo) {
+                        if(err){
+                            res.status(500)
+                                .json(err);
+                        }else{
+                            ngo.followers.push(user._id);
+                            user.followers.push(ngoId);
+                            ngo.save(err=>{
+                                    if(err){
+                                        res.status(500)
+                                            .json(err);
+                                    }
+                            });
+                            user.save((err)=>{
+                                if(err){
+                                    res.status(500)
+                                        .json(err);
+                                }
+                            });
+
+                            res.status(200).json("Followed");
                         }
-                    }, {
-                        new: true
-                    },(err, results)=> {
-                            if (err) {
-                                res.status(500).json(err);
-                            }
-                            res.json("Followed");
-                        })
+                    })
+
                 }else{
-                    res.status(200).json("unFollowed")
+                    response.message = "Unfollowed ";
+                    res.status(200).json(response.message);
                 }
-            }
-        )
 
+            })
+        }
 
-};
-
-
-module.exports.like = (req,res,next)=>{
-
-    // User.findById({_id : req.userId} , {'flag': 1} , (err , like)=>{
-    //     if(err){
-    //
-    //     }else if(like === null || like === undefined){
-    //
-    //     }else{
-    //
-    //     }
-    //
-    // })
-
-
-
-
+    })
 
 };
 
-
-module.exports.going = (req,res,next)=>{
-
-
-};
-
-
-module.exports.interested = (req,res,next)=>{
-
-
-};
 

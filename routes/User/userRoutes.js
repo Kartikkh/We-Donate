@@ -17,21 +17,6 @@ router
     .get(userController.followNgo);
 
 
-router
-    .route('/like')
-    .get(userController.like);
-
-
-
-router
-    .route('/going')
-    .get(userController.going);
-
-
-
-router
-    .route('/interested')
-    .get(userController.interested);
 
 
 

@@ -33,6 +33,23 @@ router
 
 
 
+router
+    .route('/like')
+    .get(ngoEvents.like);
+
+
+
+router
+    .route('/going')
+    .get(ngoEvents.going);
+
+
+
+router
+    .route('/interested')
+    .get(ngoEvents.interested);
+
+
 
 
 module.exports = router;
