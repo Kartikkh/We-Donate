@@ -242,7 +242,7 @@ module.exports.like = (req,res,next)=>{
 
     let eventId = req.params.eventId;
 
-    User.findById({_id : req.userId},function (err , user) {
+    User.findById({'_id' : req.userId},function (err , user) {
 
         if(err){
             res.status(response.status)
@@ -252,20 +252,19 @@ module.exports.like = (req,res,next)=>{
             res.status(200)
                 .json(response.message);
         }else{
-            Events.findById({_id : eventId} ,
-                { 'like' : {$in : [user._id] } } ,  { $pull: {'like' : user._id } },
+            Events.findById({_id : eventId ,
+                'like' : {$in : [user._id] } } ,  { $pull: {'like' : user._id } },
                 {new : true, safe : true},
                 function (err, likeEvent) {
                     if(err){
                         res.status(response.status)
                             .json(err);
                     }else if(likeEvent === null || likeEvent === undefined){
-                        Events.findById({_id : eventId}  ,function (err,event) {
+                        Events.findByIdAndUpdate({ '_id' : eventId} , {$push  : {'like' : user._id }}  ,function (err,event) {
                             if(err){
                                 res.status(500)
                                     .json(err);
                             }else{
-                                 event.like.push(user._id);
                                  res.status(200).json("Like");
                             }
                         })
@@ -296,7 +295,7 @@ module.exports.going = (req,res,next)=>{
 
     let eventId = req.params.eventId;
 
-    User.findById({_id : req.userId},function (err , user) {
+    User.findById({ '_id' : req.userId},function (err , user) {
 
         if(err){
             res.status(response.status)
@@ -306,20 +305,20 @@ module.exports.going = (req,res,next)=>{
             res.status(200)
                 .json(response.message);
         }else{
-            Events.findById({_id : eventId} ,
-                { 'going' : {$in : [user._id] } } ,  { $pull: {'going' : user._id } },
+            Events.findByIdAndUpdate({_id : eventId ,
+             'going' : {$in : [user._id] } } ,  { $pull: {'going' : user._id } },
                 {new : true, safe : true},
                 function (err, goingEvent) {
                     if(err){
                         res.status(response.status)
                             .json(err);
                     }else if(goingEvent === null || goingEvent === undefined){
-                        Events.findById({_id : eventId}  ,function (err,event) {
+                        Events.findByIdAndUpdate({ '_id' : eventId} ,  { $pull: {'going' : user._id } },function (err,event) {
                             if(err){
                                 res.status(500)
                                     .json(err);
                             }else{
-                                event.going.push(user._id);
+
                                 res.status(200).json("Going");
                             }
                         })
@@ -352,7 +351,7 @@ module.exports.interested = (req,res,next)=>{
 
     let eventId = req.params.eventId;
 
-    User.findById({_id : req.userId},function (err , user) {
+    User.findById({ '_id' : req.userId},function (err , user) {
 
         if(err){
             res.status(response.status)
@@ -362,20 +361,19 @@ module.exports.interested = (req,res,next)=>{
             res.status(200)
                 .json(response.message);
         }else{
-            Events.findById({_id : eventId} ,
-                { 'interested' : {$in : [user._id] } } ,  { $pull: {'interested' : user._id } },
+            Events.findByIdAndUpdate({_id : eventId,
+                 'interested' : {$in : [user._id] } } ,  { $pull: {'interested' : user._id } },
                 {new : true, safe : true},
                 function (err, interestedEvent) {
                     if(err){
                         res.status(response.status)
                             .json(err);
                     }else if(interestedEvent === null || interestedEvent === undefined){
-                        Events.findById({_id : eventId}  ,function (err,event) {
+                        Events.findByIdAndUpdate({'_id' : eventId},{$push : {'interested' : user._id }},function (err,event) {
                             if(err){
                                 res.status(500)
                                     .json(err);
                             }else{
-                                event.interested.push(user._id);
                                 res.status(200).json("Interested");
                             }
                         })

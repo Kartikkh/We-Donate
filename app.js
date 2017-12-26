@@ -70,6 +70,7 @@ app.use(JWTvalidation);
 app.use('/ngoEvent', ngoEvent);
 app.use('/ngoProfile',ngoProfile);
 app.use('/userInfo' ,userInfo );
+app.use('/ngoStory' , require('./routes/Ngo/ngoStory'));
 app.use('/image' , image);
 
 

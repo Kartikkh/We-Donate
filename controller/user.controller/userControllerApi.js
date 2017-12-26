@@ -99,27 +99,20 @@ module.exports.followNgo = (req,res,next)=>{
             res.status(200)
                 .json(response.message);
         }else{
-            Ngo.findById({_id : ngoId} ,
-                { 'followers' : {$in : [user._id] } } ,  { $pull: {'followers' : user._id } },
+            Ngo.findByIdAndUpdate({_id : ngoId ,
+                 'followers' : {$in : [user._id] } } ,  { $pull: {'followers' : user._id } },
                 {new : true, safe : true},
                 function (err, followNgo) {
                 if(err){
                     res.status(response.status)
                         .json(err);
                 }else if(followNgo === null || followNgo === undefined){
-                    Ngo.findById({_id : ngoId}  ,function (err,ngo) {
+                    Ngo.findByIdAndUpdate({_id : ngoId} , {$push :{'follower' : user._id }}  ,function (err,ngo) {
                         if(err){
                             res.status(500)
                                 .json(err);
                         }else{
-                            ngo.followers.push(user._id);
                             user.followers.push(ngoId);
-                            ngo.save(err=>{
-                                    if(err){
-                                        res.status(500)
-                                            .json(err);
-                                    }
-                            });
                             user.save((err)=>{
                                 if(err){
                                     res.status(500)
